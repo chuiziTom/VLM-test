@@ -1,0 +1,43 @@
+# Xiaomi-Lens-0 推理环境（Micromamba）
+#
+# 机器：Ubuntu 24.04.5 / x86_64
+# GPU ：NVIDIA RTX PRO 6000 Blackwell Workstation Edition (sm_120, 96 GB)
+# 驱动：580.178.04（driver 侧 CUDA 13.0，不影响运行时；torch 自带 cu128 运行时）
+#
+# 说明：
+#   * conda 部分只包含 Python 与「编译 CUDA 扩展所需」的 nvcc/头文件。
+#     PyTorch 走官方 pip cu128 源，不用 conda 版 torch。
+#   * pip 部分由 micromamba env export --from-history 生成，仅含显式安装项。
+#   * CUDA 扩展（flash-attn / causal-conv1d）**无法仅靠本文件复现**，
+#     必须在本机编译，详见 ENV_SETUP.md。
+
+name: xiaomi-lens
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  # 编译 CUDA 扩展用（提供 nvcc 12.8 + CUDA 头文件），运行推理本身不需要
+  - cuda-nvcc=12.8
+  - cuda-cudart-dev=12.8
+  - cuda-cccl=12.8
+  - pip:
+      # 核心框架（来源：https://download.pytorch.org/whl/cu128）
+      - torch==2.10.0+cu128
+      - torchvision==0.25.0+cu128
+      - transformers==5.4.0
+      - tokenizers==0.22.2
+      - accelerate==1.15.0
+      - huggingface_hub==1.33.0
+      - safetensors==0.8.0
+      # CUDA 加速组件
+      - flash-linear-attention==0.5.2
+      - fla-core==0.5.2
+      - causal_conv1d==1.6.1
+      - flash_attn==2.8.3.post2
+      # 基础依赖
+      - numpy==2.4.6
+      - pillow==12.3.0
+      - einops==0.8.2
+      # socks 代理支持（ALL_PROXY=socks5://... 时 huggingface_hub 必需）
+      - socksio==1.0.0

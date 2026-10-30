@@ -1,0 +1,389 @@
+{
+  "total_samples": 2638,
+  "correct": 2315,
+  "accuracy": 0.8775587566338134,
+  "accuracy_percent": 87.75587566338135,
+  "valid_answers": 2629,
+  "valid_rate": 0.9965883244882486,
+  "invalid": 9,
+  "invalid_rate": 0.003411675511751327,
+  "truncated": 7,
+  "truncation_rate": 0.00265352539802881,
+  "errors": 0,
+  "error_rate": 0.0,
+  "official": {
+    "accuracy_2d_ade20k": 0.7756714060031595,
+    "accuracy_2d_coco": 0.893167701863354,
+    "accuracy_2d": 0.8344195539332568,
+    "accuracy_3d_omni3d": 0.9208333333333333,
+    "accuracy_3d": 0.9208333333333333,
+    "cvbench_accuracy": 0.877626443633295,
+    "cvbench_accuracy_percent": 87.7626443633295,
+    "computable": true
+  },
+  "plain_sample_accuracy": 0.8775587566338134,
+  "groups": {
+    "by_type": {
+      "2D": {
+        "n": 1438,
+        "correct": 1210,
+        "accuracy": 0.8414464534075105,
+        "accuracy_percent": 84.14464534075104,
+        "invalid": 7,
+        "invalid_rate": 0.004867872044506259
+      },
+      "3D": {
+        "n": 1200,
+        "correct": 1105,
+        "accuracy": 0.9208333333333333,
+        "accuracy_percent": 92.08333333333333,
+        "invalid": 2,
+        "invalid_rate": 0.0016666666666666668
+      }
+    },
+    "by_task": {
+      "Count": {
+        "n": 788,
+        "correct": 587,
+        "accuracy": 0.7449238578680203,
+        "accuracy_percent": 74.49238578680203,
+        "invalid": 6,
+        "invalid_rate": 0.007614213197969543
+      },
+      "Depth": {
+        "n": 600,
+        "correct": 569,
+        "accuracy": 0.9483333333333334,
+        "accuracy_percent": 94.83333333333333,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "Distance": {
+        "n": 600,
+        "correct": 536,
+        "accuracy": 0.8933333333333333,
+        "accuracy_percent": 89.33333333333333,
+        "invalid": 2,
+        "invalid_rate": 0.0033333333333333335
+      },
+      "Relation": {
+        "n": 650,
+        "correct": 623,
+        "accuracy": 0.9584615384615385,
+        "accuracy_percent": 95.84615384615384,
+        "invalid": 1,
+        "invalid_rate": 0.0015384615384615385
+      }
+    },
+    "by_source": {
+      "ADE20K": {
+        "n": 633,
+        "correct": 491,
+        "accuracy": 0.7756714060031595,
+        "accuracy_percent": 77.56714060031595,
+        "invalid": 5,
+        "invalid_rate": 0.007898894154818325
+      },
+      "COCO": {
+        "n": 805,
+        "correct": 719,
+        "accuracy": 0.893167701863354,
+        "accuracy_percent": 89.3167701863354,
+        "invalid": 2,
+        "invalid_rate": 0.002484472049689441
+      },
+      "Omni3D": {
+        "n": 1200,
+        "correct": 1105,
+        "accuracy": 0.9208333333333333,
+        "accuracy_percent": 92.08333333333333,
+        "invalid": 2,
+        "invalid_rate": 0.0016666666666666668
+      }
+    },
+    "by_type_task": {
+      "2D/Count": {
+        "n": 788,
+        "correct": 587,
+        "accuracy": 0.7449238578680203,
+        "accuracy_percent": 74.49238578680203,
+        "invalid": 6,
+        "invalid_rate": 0.007614213197969543
+      },
+      "2D/Relation": {
+        "n": 650,
+        "correct": 623,
+        "accuracy": 0.9584615384615385,
+        "accuracy_percent": 95.84615384615384,
+        "invalid": 1,
+        "invalid_rate": 0.0015384615384615385
+      },
+      "3D/Depth": {
+        "n": 600,
+        "correct": 569,
+        "accuracy": 0.9483333333333334,
+        "accuracy_percent": 94.83333333333333,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Distance": {
+        "n": 600,
+        "correct": 536,
+        "accuracy": 0.8933333333333333,
+        "accuracy_percent": 89.33333333333333,
+        "invalid": 2,
+        "invalid_rate": 0.0033333333333333335
+      }
+    },
+    "by_type_task_source": {
+      "2D/Count/ADE20K": {
+        "n": 342,
+        "correct": 216,
+        "accuracy": 0.631578947368421,
+        "accuracy_percent": 63.1578947368421,
+        "invalid": 4,
+        "invalid_rate": 0.011695906432748537
+      },
+      "2D/Count/COCO": {
+        "n": 446,
+        "correct": 371,
+        "accuracy": 0.8318385650224215,
+        "accuracy_percent": 83.18385650224215,
+        "invalid": 2,
+        "invalid_rate": 0.004484304932735426
+      },
+      "2D/Relation/ADE20K": {
+        "n": 291,
+        "correct": 275,
+        "accuracy": 0.9450171821305842,
+        "accuracy_percent": 94.50171821305842,
+        "invalid": 1,
+        "invalid_rate": 0.003436426116838488
+      },
+      "2D/Relation/COCO": {
+        "n": 359,
+        "correct": 348,
+        "accuracy": 0.9693593314763231,
+        "accuracy_percent": 96.93593314763231,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Depth/Omni3D": {
+        "n": 600,
+        "correct": 569,
+        "accuracy": 0.9483333333333334,
+        "accuracy_percent": 94.83333333333333,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Distance/Omni3D": {
+        "n": 600,
+        "correct": 536,
+        "accuracy": 0.8933333333333333,
+        "accuracy_percent": 89.33333333333333,
+        "invalid": 2,
+        "invalid_rate": 0.0033333333333333335
+      }
+    }
+  },
+  "invalid_reasons": {
+    "truncated_no_final_answer": 6,
+    "malformed_final_answer": 3
+  },
+  "finish_reasons": {
+    "eos": 2631,
+    "length": 7
+  },
+  "timing_seconds": {
+    "model_load": 23.319791046902537,
+    "warmup": 12.76636154181324,
+    "preprocess": {
+      "n": 2638,
+      "mean": 0.03817739052637293,
+      "median": 0.016413063975051045,
+      "p95": 0.12384133633458999,
+      "max": 0.8834129988681525,
+      "sum": 100.71195620857179
+    },
+    "image_load": {
+      "n": 2638,
+      "mean": 0.005114512899685778,
+      "median": 0.0024452219950035214,
+      "p95": 0.01593016267288477,
+      "max": 0.15856361389160156,
+      "sum": 13.492085029371083
+    },
+    "generate": {
+      "n": 2638,
+      "mean": 4.93719795595922,
+      "median": 2.1897791360970587,
+      "p95": 12.348612908541694,
+      "max": 371.4489322260488,
+      "sum": 13024.328207820421
+    },
+    "end_to_end": {
+      "n": 2638,
+      "mean": 4.9817708409863535,
+      "median": 2.2357269399799407,
+      "p95": 12.42352741851937,
+      "max": 372.1174988071434,
+      "sum": 13141.911478522
+    }
+  },
+  "throughput": {
+    "samples_per_second_generate": 0.20254403589246317,
+    "samples_per_second_e2e": 0.20073183450606238,
+    "tokens_per_second_generate": 27.797594948706152,
+    "note": "tokens/s includes prefill + decode; it is not pure decode speed"
+  },
+  "tokens": {
+    "generated": {
+      "n": 2638,
+      "mean": 137.24222896133435,
+      "median": 74.0,
+      "p95": 257.1500000000001,
+      "max": 8192,
+      "sum": 362045
+    },
+    "thinking": {
+      "n": 2638,
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "max": 0,
+      "sum": 0
+    },
+    "answer": {
+      "n": 2638,
+      "mean": 137.24222896133435,
+      "median": 74.0,
+      "p95": 257.1500000000001,
+      "max": 8192,
+      "sum": 362045
+    },
+    "prompt": {
+      "n": 2638,
+      "mean": 754.2391963608794,
+      "median": 395.0,
+      "p95": 1985.0,
+      "max": 3684,
+      "sum": 1989683
+    }
+  },
+  "vram": {
+    "model_load": {
+      "allocated_gib": 8.609443187713623,
+      "reserved_gib": 8.625,
+      "peak_allocated_gib": 8.609453201293945,
+      "peak_reserved_gib": 8.625,
+      "gpu_used_gib": 89.77484130859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "per_sample_peak_allocated_gib_mean": 8.807557838987996,
+    "per_sample_peak_allocated_gib_max": 9.360759735107422,
+    "global_peak_allocated_gib": 9.355865478515625,
+    "global_peak_reserved_gib": 9.45703125,
+    "gpu_used_gib_end": 20.224365234375
+  },
+  "subset": false,
+  "experiment": {
+    "mode": "off",
+    "enable_thinking": false,
+    "max_new_tokens": 8192,
+    "do_sample": false,
+    "split": "all",
+    "limit": null,
+    "stratified": false,
+    "seed": 0,
+    "model_path": "SeerRay-Lab/Xiaomi-Lens-0",
+    "dataset_dir": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench",
+    "dataset_files": {
+      "test_2d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_2d.parquet",
+        "size": 184906137,
+        "mtime_ns": 1793184656243391200
+      },
+      "test_3d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_3d.parquet",
+        "size": 219902227,
+        "mtime_ns": 1793184270081739778
+      }
+    },
+    "prompt_template": "\n\nAfter answering the question, put the final choice on a separate line using exactly this format: FINAL_ANSWER: (X)\nwhere X is one of the provided option letters.",
+    "prompt_template_sha1": "cd11a2a3d0ec89fdacf1b321c824f708b1c503b5",
+    "parser_version": "1.0",
+    "selected_uids_sha1": "2a8a5c968bbe2067f31fb44231580f4c50740604",
+    "selected_samples": 2638,
+    "torch": "2.10.0+cu128",
+    "transformers": "5.4.0",
+    "python": "3.11.18",
+    "fingerprint": "b469dc42c1959f0090192b5e3197080e41b4ca41",
+    "model_name": "Xiaomi-Lens-0",
+    "model_resolved_path": "/home/20261024_1/.cache/huggingface/hub/models--SeerRay-Lab--Xiaomi-Lens-0/snapshots/68f57cdde1a19f751e78b18af04efa8ca8bd7fce",
+    "model_snapshot": "68f57cdde1a19f751e78b18af04efa8ca8bd7fce",
+    "model_load_seconds": 23.319791046902537,
+    "vram_after_load": {
+      "allocated_gib": 8.609443187713623,
+      "reserved_gib": 8.625,
+      "peak_allocated_gib": 8.609453201293945,
+      "peak_reserved_gib": 8.625,
+      "gpu_used_gib": 89.77484130859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "warmup_seconds": 12.76636154181324,
+    "global_peak_allocated_gib": 9.355865478515625,
+    "global_peak_reserved_gib": 9.45703125,
+    "gpu_used_gib_end": 20.224365234375,
+    "total_wall_seconds": 13022.359032239066,
+    "completed_samples": 2638,
+    "expected_samples": 2638,
+    "status": "completed",
+    "attn_implementation": "flash_attention_2",
+    "python_executable": "/home/20261024_1/.local/share/mamba/envs/xiaomi-lens/bin/python",
+    "conda_env": "xiaomi-lens",
+    "cuda_version": "12.8",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39"
+  },
+  "dataset_distribution": {
+    "total": 2638,
+    "by_type": {
+      "2D": 1438,
+      "3D": 1200
+    },
+    "by_task": {
+      "Count": 788,
+      "Depth": 600,
+      "Distance": 600,
+      "Relation": 650
+    },
+    "by_source": {
+      "ADE20K": 633,
+      "COCO": 805,
+      "Omni3D": 1200
+    },
+    "by_type_task_source": {
+      "2D/Count/ADE20K": 342,
+      "2D/Count/COCO": 446,
+      "2D/Relation/ADE20K": 291,
+      "2D/Relation/COCO": 359,
+      "3D/Depth/Omni3D": 600,
+      "3D/Distance/Omni3D": 600
+    },
+    "choice_counts": {
+      "2": 1850,
+      "4": 493,
+      "5": 156,
+      "6": 139
+    },
+    "answer_letters": {
+      "A": 1112,
+      "B": 1104,
+      "C": 169,
+      "D": 167,
+      "E": 63,
+      "F": 23
+    }
+  },
+  "experiment_mode": "off",
+  "aborted": false
+}

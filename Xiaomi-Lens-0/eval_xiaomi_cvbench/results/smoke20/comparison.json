@@ -1,0 +1,62 @@
+{
+  "common_samples": 20,
+  "only_in_off": 0,
+  "only_in_on": 0,
+  "off_right_on_wrong": 0,
+  "off_wrong_on_right": 0,
+  "prediction_changed": 1,
+  "task_deltas": {
+    "Count": {
+      "off": {
+        "correct": 5,
+        "n": 8,
+        "accuracy": 0.625
+      },
+      "on": {
+        "correct": 5,
+        "n": 8,
+        "accuracy": 0.625
+      },
+      "accuracy_delta": 0.0
+    },
+    "Depth": {
+      "off": {
+        "correct": 3,
+        "n": 3,
+        "accuracy": 1.0
+      },
+      "on": {
+        "correct": 3,
+        "n": 3,
+        "accuracy": 1.0
+      },
+      "accuracy_delta": 0.0
+    },
+    "Distance": {
+      "off": {
+        "correct": 3,
+        "n": 3,
+        "accuracy": 1.0
+      },
+      "on": {
+        "correct": 3,
+        "n": 3,
+        "accuracy": 1.0
+      },
+      "accuracy_delta": 0.0
+    },
+    "Relation": {
+      "off": {
+        "correct": 6,
+        "n": 6,
+        "accuracy": 1.0
+      },
+      "on": {
+        "correct": 6,
+        "n": 6,
+        "accuracy": 1.0
+      },
+      "accuracy_delta": 0.0
+    }
+  }
+}

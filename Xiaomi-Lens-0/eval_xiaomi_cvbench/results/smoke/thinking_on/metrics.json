@@ -1,0 +1,246 @@
+{
+  "total_samples": 1,
+  "correct": 1,
+  "accuracy": 1.0,
+  "accuracy_percent": 100.0,
+  "valid_answers": 1,
+  "valid_rate": 1.0,
+  "invalid": 0,
+  "invalid_rate": 0.0,
+  "truncated": 0,
+  "truncation_rate": 0.0,
+  "errors": 0,
+  "error_rate": 0.0,
+  "official": {
+    "accuracy_2d_ade20k": 1.0,
+    "accuracy_2d_coco": null,
+    "accuracy_2d": null,
+    "accuracy_3d_omni3d": null,
+    "accuracy_3d": null,
+    "cvbench_accuracy": null,
+    "cvbench_accuracy_percent": null,
+    "computable": false
+  },
+  "plain_sample_accuracy": 1.0,
+  "groups": {
+    "by_type": {
+      "2D": {
+        "n": 1,
+        "correct": 1,
+        "accuracy": 1.0,
+        "accuracy_percent": 100.0,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    },
+    "by_task": {
+      "Count": {
+        "n": 1,
+        "correct": 1,
+        "accuracy": 1.0,
+        "accuracy_percent": 100.0,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    },
+    "by_source": {
+      "ADE20K": {
+        "n": 1,
+        "correct": 1,
+        "accuracy": 1.0,
+        "accuracy_percent": 100.0,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    },
+    "by_type_task": {
+      "2D/Count": {
+        "n": 1,
+        "correct": 1,
+        "accuracy": 1.0,
+        "accuracy_percent": 100.0,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    },
+    "by_type_task_source": {
+      "2D/Count/ADE20K": {
+        "n": 1,
+        "correct": 1,
+        "accuracy": 1.0,
+        "accuracy_percent": 100.0,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    }
+  },
+  "invalid_reasons": {},
+  "finish_reasons": {
+    "eos": 1
+  },
+  "timing_seconds": {
+    "model_load": 9.970761462813243,
+    "warmup": 5.541580789955333,
+    "preprocess": {
+      "n": 1,
+      "mean": 0.009844956919550896,
+      "median": 0.009844956919550896,
+      "p95": 0.009844956919550896,
+      "max": 0.009844956919550896,
+      "sum": 0.009844956919550896
+    },
+    "image_load": {
+      "n": 1,
+      "mean": 0.0014438668731600046,
+      "median": 0.0014438668731600046,
+      "p95": 0.0014438668731600046,
+      "max": 0.0014438668731600046,
+      "sum": 0.0014438668731600046
+    },
+    "generate": {
+      "n": 1,
+      "mean": 3.6276617248076946,
+      "median": 3.6276617248076946,
+      "p95": 3.6276617248076946,
+      "max": 3.6276617248076946,
+      "sum": 3.6276617248076946
+    },
+    "end_to_end": {
+      "n": 1,
+      "mean": 3.640602456172928,
+      "median": 3.640602456172928,
+      "p95": 3.640602456172928,
+      "max": 3.640602456172928,
+      "sum": 3.640602456172928
+    }
+  },
+  "throughput": {
+    "samples_per_second_generate": 0.27565966064628333,
+    "samples_per_second_e2e": 0.27467981248664525,
+    "tokens_per_second_generate": 29.49558368915232,
+    "note": "tokens/s includes prefill + decode; it is not pure decode speed"
+  },
+  "tokens": {
+    "generated": {
+      "n": 1,
+      "mean": 107.0,
+      "median": 107.0,
+      "p95": 107.0,
+      "max": 107,
+      "sum": 107
+    },
+    "thinking": {
+      "n": 1,
+      "mean": 64.0,
+      "median": 64.0,
+      "p95": 64.0,
+      "max": 64,
+      "sum": 64
+    },
+    "answer": {
+      "n": 1,
+      "mean": 42.0,
+      "median": 42.0,
+      "p95": 42.0,
+      "max": 42,
+      "sum": 42
+    },
+    "prompt": {
+      "n": 1,
+      "mean": 147.0,
+      "median": 147.0,
+      "p95": 147.0,
+      "max": 147,
+      "sum": 147
+    }
+  },
+  "vram": {
+    "model_load": {
+      "allocated_gib": 8.609443187713623,
+      "reserved_gib": 8.62109375,
+      "peak_allocated_gib": 8.609453201293945,
+      "peak_reserved_gib": 8.62109375,
+      "gpu_used_gib": 38.79046630859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "per_sample_peak_allocated_gib_mean": 8.696021556854248,
+    "per_sample_peak_allocated_gib_max": 8.696021556854248,
+    "global_peak_allocated_gib": 8.696021556854248,
+    "global_peak_reserved_gib": 8.71484375,
+    "gpu_used_gib_end": 38.90570068359375
+  },
+  "subset": true,
+  "experiment": {
+    "mode": "on",
+    "enable_thinking": true,
+    "max_new_tokens": 8192,
+    "do_sample": false,
+    "split": "all",
+    "limit": 1,
+    "stratified": false,
+    "seed": 0,
+    "model_path": "SeerRay-Lab/Xiaomi-Lens-0",
+    "dataset_dir": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench",
+    "dataset_files": {
+      "test_2d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_2d.parquet",
+        "size": 184906137,
+        "mtime_ns": 1793184656243391200
+      },
+      "test_3d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_3d.parquet",
+        "size": 219902227,
+        "mtime_ns": 1793184270081739778
+      }
+    },
+    "prompt_template": "\n\nAfter answering the question, put the final choice on a separate line using exactly this format: FINAL_ANSWER: (X)\nwhere X is one of the provided option letters.",
+    "prompt_template_sha1": "cd11a2a3d0ec89fdacf1b321c824f708b1c503b5",
+    "parser_version": "1.0",
+    "selected_uids_sha1": "8f8100fc87cb12f29fc9bcbe34b9426e31afd14d",
+    "selected_samples": 1,
+    "torch": "2.10.0+cu128",
+    "transformers": "5.4.0",
+    "python": "3.11.18",
+    "fingerprint": "c65aef07261749f2d9df20b7da177a28ba1a56ef",
+    "model_load_seconds": 9.970761462813243,
+    "vram_after_load": {
+      "allocated_gib": 8.609443187713623,
+      "reserved_gib": 8.62109375,
+      "peak_allocated_gib": 8.609453201293945,
+      "peak_reserved_gib": 8.62109375,
+      "gpu_used_gib": 38.79046630859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "warmup_seconds": 5.541580789955333,
+    "global_peak_allocated_gib": 8.696021556854248,
+    "global_peak_reserved_gib": 8.71484375,
+    "gpu_used_gib_end": 38.90570068359375,
+    "total_wall_seconds": 3.642263954039663,
+    "completed_samples": 1,
+    "expected_samples": 1,
+    "status": "completed",
+    "attn_implementation": "flash_attention_2"
+  },
+  "dataset_distribution": {
+    "total": 1,
+    "by_type": {
+      "2D": 1
+    },
+    "by_task": {
+      "Count": 1
+    },
+    "by_source": {
+      "ADE20K": 1
+    },
+    "by_type_task_source": {
+      "2D/Count/ADE20K": 1
+    },
+    "choice_counts": {
+      "4": 1
+    },
+    "answer_letters": {
+      "C": 1
+    }
+  },
+  "experiment_mode": "on"
+}

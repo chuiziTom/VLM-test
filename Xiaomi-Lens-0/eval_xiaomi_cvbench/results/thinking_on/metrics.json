@@ -1,0 +1,389 @@
+{
+  "total_samples": 2638,
+  "correct": 2301,
+  "accuracy": 0.8722517058377559,
+  "accuracy_percent": 87.2251705837756,
+  "valid_answers": 2612,
+  "valid_rate": 0.9901440485216073,
+  "invalid": 26,
+  "invalid_rate": 0.009855951478392721,
+  "truncated": 11,
+  "truncation_rate": 0.004169825625473844,
+  "errors": 0,
+  "error_rate": 0.0,
+  "official": {
+    "accuracy_2d_ade20k": 0.7898894154818326,
+    "accuracy_2d_coco": 0.8782608695652174,
+    "accuracy_2d": 0.834075142523525,
+    "accuracy_3d_omni3d": 0.9116666666666666,
+    "accuracy_3d": 0.9116666666666666,
+    "cvbench_accuracy": 0.8728709045950958,
+    "cvbench_accuracy_percent": 87.28709045950957,
+    "computable": true
+  },
+  "plain_sample_accuracy": 0.8722517058377559,
+  "groups": {
+    "by_type": {
+      "2D": {
+        "n": 1438,
+        "correct": 1207,
+        "accuracy": 0.8393602225312935,
+        "accuracy_percent": 83.93602225312935,
+        "invalid": 23,
+        "invalid_rate": 0.015994436717663423
+      },
+      "3D": {
+        "n": 1200,
+        "correct": 1094,
+        "accuracy": 0.9116666666666666,
+        "accuracy_percent": 91.16666666666667,
+        "invalid": 3,
+        "invalid_rate": 0.0025
+      }
+    },
+    "by_task": {
+      "Count": {
+        "n": 788,
+        "correct": 582,
+        "accuracy": 0.7385786802030457,
+        "accuracy_percent": 73.85786802030456,
+        "invalid": 22,
+        "invalid_rate": 0.027918781725888325
+      },
+      "Depth": {
+        "n": 600,
+        "correct": 565,
+        "accuracy": 0.9416666666666667,
+        "accuracy_percent": 94.16666666666667,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "Distance": {
+        "n": 600,
+        "correct": 529,
+        "accuracy": 0.8816666666666667,
+        "accuracy_percent": 88.16666666666667,
+        "invalid": 3,
+        "invalid_rate": 0.005
+      },
+      "Relation": {
+        "n": 650,
+        "correct": 625,
+        "accuracy": 0.9615384615384616,
+        "accuracy_percent": 96.15384615384616,
+        "invalid": 1,
+        "invalid_rate": 0.0015384615384615385
+      }
+    },
+    "by_source": {
+      "ADE20K": {
+        "n": 633,
+        "correct": 500,
+        "accuracy": 0.7898894154818326,
+        "accuracy_percent": 78.98894154818325,
+        "invalid": 12,
+        "invalid_rate": 0.018957345971563982
+      },
+      "COCO": {
+        "n": 805,
+        "correct": 707,
+        "accuracy": 0.8782608695652174,
+        "accuracy_percent": 87.82608695652173,
+        "invalid": 11,
+        "invalid_rate": 0.013664596273291925
+      },
+      "Omni3D": {
+        "n": 1200,
+        "correct": 1094,
+        "accuracy": 0.9116666666666666,
+        "accuracy_percent": 91.16666666666667,
+        "invalid": 3,
+        "invalid_rate": 0.0025
+      }
+    },
+    "by_type_task": {
+      "2D/Count": {
+        "n": 788,
+        "correct": 582,
+        "accuracy": 0.7385786802030457,
+        "accuracy_percent": 73.85786802030456,
+        "invalid": 22,
+        "invalid_rate": 0.027918781725888325
+      },
+      "2D/Relation": {
+        "n": 650,
+        "correct": 625,
+        "accuracy": 0.9615384615384616,
+        "accuracy_percent": 96.15384615384616,
+        "invalid": 1,
+        "invalid_rate": 0.0015384615384615385
+      },
+      "3D/Depth": {
+        "n": 600,
+        "correct": 565,
+        "accuracy": 0.9416666666666667,
+        "accuracy_percent": 94.16666666666667,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Distance": {
+        "n": 600,
+        "correct": 529,
+        "accuracy": 0.8816666666666667,
+        "accuracy_percent": 88.16666666666667,
+        "invalid": 3,
+        "invalid_rate": 0.005
+      }
+    },
+    "by_type_task_source": {
+      "2D/Count/ADE20K": {
+        "n": 342,
+        "correct": 224,
+        "accuracy": 0.6549707602339181,
+        "accuracy_percent": 65.49707602339181,
+        "invalid": 11,
+        "invalid_rate": 0.03216374269005848
+      },
+      "2D/Count/COCO": {
+        "n": 446,
+        "correct": 358,
+        "accuracy": 0.8026905829596412,
+        "accuracy_percent": 80.26905829596413,
+        "invalid": 11,
+        "invalid_rate": 0.02466367713004484
+      },
+      "2D/Relation/ADE20K": {
+        "n": 291,
+        "correct": 276,
+        "accuracy": 0.9484536082474226,
+        "accuracy_percent": 94.84536082474227,
+        "invalid": 1,
+        "invalid_rate": 0.003436426116838488
+      },
+      "2D/Relation/COCO": {
+        "n": 359,
+        "correct": 349,
+        "accuracy": 0.9721448467966574,
+        "accuracy_percent": 97.21448467966574,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Depth/Omni3D": {
+        "n": 600,
+        "correct": 565,
+        "accuracy": 0.9416666666666667,
+        "accuracy_percent": 94.16666666666667,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Distance/Omni3D": {
+        "n": 600,
+        "correct": 529,
+        "accuracy": 0.8816666666666667,
+        "accuracy_percent": 88.16666666666667,
+        "invalid": 3,
+        "invalid_rate": 0.005
+      }
+    }
+  },
+  "invalid_reasons": {
+    "malformed_final_answer": 15,
+    "truncated_before_final_answer": 11
+  },
+  "finish_reasons": {
+    "eos": 2627,
+    "length": 11
+  },
+  "timing_seconds": {
+    "model_load": 23.319791046902537,
+    "warmup": 4.169279148103669,
+    "preprocess": {
+      "n": 2638,
+      "mean": 0.05459467183180376,
+      "median": 0.016883972566574812,
+      "p95": 0.25780248752562374,
+      "max": 1.291181832086295,
+      "sum": 144.02074429229833
+    },
+    "image_load": {
+      "n": 2638,
+      "mean": 0.005580051995035744,
+      "median": 0.0024743133690208197,
+      "p95": 0.027401592093519875,
+      "max": 0.1639832949731499,
+      "sum": 14.720177162904292
+    },
+    "generate": {
+      "n": 2638,
+      "mean": 19.514739188532097,
+      "median": 11.109429872012697,
+      "p95": 65.3889361635549,
+      "max": 1068.3360089610796,
+      "sum": 51479.88197934767
+    },
+    "end_to_end": {
+      "n": 2638,
+      "mean": 19.577457651550127,
+      "median": 11.152960525942035,
+      "p95": 65.44546343114926,
+      "max": 1068.376856722869,
+      "sum": 51645.33328478923
+    }
+  },
+  "throughput": {
+    "samples_per_second_generate": 0.051243318721249084,
+    "samples_per_second_e2e": 0.051079155312120976,
+    "tokens_per_second_generate": 21.391210656655705,
+    "note": "tokens/s includes prefill + decode; it is not pure decode speed"
+  },
+  "tokens": {
+    "generated": {
+      "n": 2638,
+      "mean": 417.44389689158453,
+      "median": 323.0,
+      "p95": 784.3000000000002,
+      "max": 8192,
+      "sum": 1101217
+    },
+    "thinking": {
+      "n": 2638,
+      "mean": 302.2577710386657,
+      "median": 216.0,
+      "p95": 629.0,
+      "max": 8192,
+      "sum": 797356
+    },
+    "answer": {
+      "n": 2638,
+      "mean": 114.19029567854435,
+      "median": 107.0,
+      "p95": 174.0,
+      "max": 629,
+      "sum": 301234
+    },
+    "prompt": {
+      "n": 2638,
+      "mean": 752.2391963608794,
+      "median": 393.0,
+      "p95": 1983.0,
+      "max": 3682,
+      "sum": 1984407
+    }
+  },
+  "vram": {
+    "model_load": {
+      "allocated_gib": 8.609443187713623,
+      "reserved_gib": 8.625,
+      "peak_allocated_gib": 8.609453201293945,
+      "peak_reserved_gib": 8.625,
+      "gpu_used_gib": 89.77484130859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "per_sample_peak_allocated_gib_mean": 8.807771279470229,
+    "per_sample_peak_allocated_gib_max": 9.355592727661133,
+    "global_peak_allocated_gib": 9.355592727661133,
+    "global_peak_reserved_gib": 9.4609375,
+    "gpu_used_gib_end": 20.23193359375
+  },
+  "subset": false,
+  "experiment": {
+    "mode": "on",
+    "enable_thinking": true,
+    "max_new_tokens": 8192,
+    "do_sample": false,
+    "split": "all",
+    "limit": null,
+    "stratified": false,
+    "seed": 0,
+    "model_path": "SeerRay-Lab/Xiaomi-Lens-0",
+    "dataset_dir": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench",
+    "dataset_files": {
+      "test_2d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_2d.parquet",
+        "size": 184906137,
+        "mtime_ns": 1793184656243391200
+      },
+      "test_3d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_3d.parquet",
+        "size": 219902227,
+        "mtime_ns": 1793184270081739778
+      }
+    },
+    "prompt_template": "\n\nAfter answering the question, put the final choice on a separate line using exactly this format: FINAL_ANSWER: (X)\nwhere X is one of the provided option letters.",
+    "prompt_template_sha1": "cd11a2a3d0ec89fdacf1b321c824f708b1c503b5",
+    "parser_version": "1.0",
+    "selected_uids_sha1": "2a8a5c968bbe2067f31fb44231580f4c50740604",
+    "selected_samples": 2638,
+    "torch": "2.10.0+cu128",
+    "transformers": "5.4.0",
+    "python": "3.11.18",
+    "fingerprint": "35bae589e8ab76d434c01564eb12964f02c48930",
+    "model_name": "Xiaomi-Lens-0",
+    "model_resolved_path": "/home/20261024_1/.cache/huggingface/hub/models--SeerRay-Lab--Xiaomi-Lens-0/snapshots/68f57cdde1a19f751e78b18af04efa8ca8bd7fce",
+    "model_snapshot": "68f57cdde1a19f751e78b18af04efa8ca8bd7fce",
+    "model_load_seconds": 23.319791046902537,
+    "vram_after_load": {
+      "allocated_gib": 8.609443187713623,
+      "reserved_gib": 8.625,
+      "peak_allocated_gib": 8.609453201293945,
+      "peak_reserved_gib": 8.625,
+      "gpu_used_gib": 89.77484130859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "warmup_seconds": 4.169279148103669,
+    "global_peak_allocated_gib": 9.355592727661133,
+    "global_peak_reserved_gib": 9.4609375,
+    "gpu_used_gib_end": 20.23193359375,
+    "total_wall_seconds": 51646.33932420192,
+    "completed_samples": 2638,
+    "expected_samples": 2638,
+    "status": "completed",
+    "attn_implementation": "flash_attention_2",
+    "python_executable": "/home/20261024_1/.local/share/mamba/envs/xiaomi-lens/bin/python",
+    "conda_env": "xiaomi-lens",
+    "cuda_version": "12.8",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39"
+  },
+  "dataset_distribution": {
+    "total": 2638,
+    "by_type": {
+      "2D": 1438,
+      "3D": 1200
+    },
+    "by_task": {
+      "Count": 788,
+      "Depth": 600,
+      "Distance": 600,
+      "Relation": 650
+    },
+    "by_source": {
+      "ADE20K": 633,
+      "COCO": 805,
+      "Omni3D": 1200
+    },
+    "by_type_task_source": {
+      "2D/Count/ADE20K": 342,
+      "2D/Count/COCO": 446,
+      "2D/Relation/ADE20K": 291,
+      "2D/Relation/COCO": 359,
+      "3D/Depth/Omni3D": 600,
+      "3D/Distance/Omni3D": 600
+    },
+    "choice_counts": {
+      "2": 1850,
+      "4": 493,
+      "5": 156,
+      "6": 139
+    },
+    "answer_letters": {
+      "A": 1112,
+      "B": 1104,
+      "C": 169,
+      "D": 167,
+      "E": 63,
+      "F": 23
+    }
+  },
+  "experiment_mode": "on",
+  "aborted": false
+}

@@ -1,0 +1,53 @@
+{
+  "config": {
+    "mode": "on",
+    "enable_thinking": true,
+    "max_new_tokens": 8192,
+    "do_sample": false,
+    "split": "all",
+    "limit": 1,
+    "stratified": false,
+    "seed": 0,
+    "model_path": "SeerRay-Lab/Xiaomi-Lens-0",
+    "dataset_dir": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench",
+    "dataset_files": {
+      "test_2d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_2d.parquet",
+        "size": 184906137,
+        "mtime_ns": 1793184656243391200
+      },
+      "test_3d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_3d.parquet",
+        "size": 219902227,
+        "mtime_ns": 1793184270081739778
+      }
+    },
+    "prompt_template": "\n\nAfter answering the question, put the final choice on a separate line using exactly this format: FINAL_ANSWER: (X)\nwhere X is one of the provided option letters.",
+    "prompt_template_sha1": "cd11a2a3d0ec89fdacf1b321c824f708b1c503b5",
+    "parser_version": "1.0",
+    "selected_uids_sha1": "8f8100fc87cb12f29fc9bcbe34b9426e31afd14d",
+    "selected_samples": 1,
+    "torch": "2.10.0+cu128",
+    "transformers": "5.4.0",
+    "python": "3.11.18",
+    "fingerprint": "c65aef07261749f2d9df20b7da177a28ba1a56ef",
+    "model_load_seconds": 9.970761462813243,
+    "vram_after_load": {
+      "allocated_gib": 8.609443187713623,
+      "reserved_gib": 8.62109375,
+      "peak_allocated_gib": 8.609453201293945,
+      "peak_reserved_gib": 8.62109375,
+      "gpu_used_gib": 38.79046630859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "warmup_seconds": 5.541580789955333,
+    "global_peak_allocated_gib": 8.696021556854248,
+    "global_peak_reserved_gib": 8.71484375,
+    "gpu_used_gib_end": 38.90570068359375,
+    "total_wall_seconds": 3.642263954039663,
+    "completed_samples": 1,
+    "expected_samples": 1,
+    "status": "completed",
+    "attn_implementation": "flash_attention_2"
+  }
+}

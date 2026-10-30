@@ -1,0 +1,5 @@
+[vllm.general_plugins]
+xiaomi_lens_register = xiaomi_lens.integrations.vllm.plugin:register
+
+[vllm.io_processor_plugins]
+xiaomi_lens_mask = xiaomi_lens.integrations.vllm.io_processor:make_io_processor

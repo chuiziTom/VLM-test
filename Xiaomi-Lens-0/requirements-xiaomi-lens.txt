@@ -1,0 +1,45 @@
+# Xiaomi-Lens-0 推理环境 —— 实际安装成功的 pip 依赖（版本已核对）
+#
+# 适用机器：Ubuntu 24.04 / x86_64 / Python 3.11 / NVIDIA sm_120 (Blackwell)
+# 生成时间：2026-10-28
+#
+# 注意：本文件**不能**单独复现 CUDA 扩展。
+#   * torch/torchvision 必须来自 PyTorch 官方 cu128 源（见下方注释）。
+#   * flash-attn / causal-conv1d 需本机用 CUDA 12.8 的 nvcc 从源码编译，
+#     或使用与本机 torch/ABI 完全匹配的预编译 wheel。
+#     详见 ENV_SETUP.md 的「CUDA 加速组件」一节。
+
+# --- 核心框架 -------------------------------------------------------------
+# 安装方式（不要从 PyPI 默认源装，默认源是 cu126/cpu 变体）：
+#   pip install torch==2.10.0 torchvision==0.25.0 \
+#       --index-url https://download.pytorch.org/whl/cu128
+torch==2.10.0+cu128
+torchvision==0.25.0+cu128
+
+# 模型代码基于 transformers 5.4.0 编写；checkpoint 的 generation_config.json
+# 也声明 transformers_version=5.4.0，不要随意升级。
+transformers==5.4.0
+tokenizers==0.22.2
+accelerate==1.15.0
+huggingface_hub==1.33.0
+safetensors==0.8.0
+
+# --- CUDA 加速组件 --------------------------------------------------------
+# Gated DeltaNet 内核（纯 Triton，无需 nvcc）。0.6.0 会强制升级
+# transformers>=5.6.2，故固定在 0.5.2。
+flash-linear-attention==0.5.2
+fla-core==0.5.2
+
+# 线性注意力中的因果卷积（源码编译，需 nvcc>=12.8 且支持 sm_120）
+causal_conv1d==1.6.1
+
+# full_attention 层 + PixelMaskDecoder + fused CE（源码编译，sm_120）
+flash_attn==2.8.3.post2
+
+# --- 基础依赖 -------------------------------------------------------------
+numpy==2.4.6
+pillow==12.3.0
+einops==0.8.2
+
+# ALL_PROXY 为 socks5:// 时 huggingface_hub(httpx) 必需
+socksio==1.0.0

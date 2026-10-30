@@ -1,0 +1,10 @@
+group,n,correct,accuracy_percent,invalid
+overall,1,1,100.0,0
+official_cvbench,1,,,
+official_2d,1,,,
+official_3d,1,,,
+by_type/2D,1,1,100.0,0
+by_task/Count,1,1,100.0,0
+by_source/ADE20K,1,1,100.0,0
+by_type_task/2D/Count,1,1,100.0,0
+by_type_task_source/2D/Count/ADE20K,1,1,100.0,0
