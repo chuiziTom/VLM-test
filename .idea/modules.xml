@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/VLM-test.iml" filepath="$PROJECT_DIR$/.idea/VLM-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/xiaomi-lens.iml" filepath="$PROJECT_DIR$/.idea/xiaomi-lens.iml" />
     </modules>
   </component>
 </project>

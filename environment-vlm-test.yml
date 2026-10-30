@@ -1,0 +1,18 @@
+# Micromamba / Conda 环境定义（vlm-test）
+#
+# 该文件只负责 Conda 层：Python、pip、ipykernel。
+# Python 包依赖请配合 requirements-vlm-test.txt 使用，原因见 ENV_SETUP.md。
+#
+# 创建：
+#   micromamba create -n vlm-test -f environment-vlm-test.yml
+#   micromamba run -n vlm-test python -m pip install -r requirements-vlm-test.txt
+#
+# 本机验证版本：Python 3.11.18 / pip 26.2.2 / ipykernel 7.4.0
+
+name: vlm-test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11.18
+  - pip=26.2.2
+  - ipykernel=7.4.0

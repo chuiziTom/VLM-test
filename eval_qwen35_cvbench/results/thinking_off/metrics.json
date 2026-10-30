@@ -1,0 +1,408 @@
+{
+  "total_samples": 2638,
+  "correct": 2288,
+  "accuracy": 0.8673237300985596,
+  "accuracy_percent": 86.73237300985595,
+  "valid_answers": 2637,
+  "valid_rate": 0.9996209249431387,
+  "invalid": 1,
+  "invalid_rate": 0.0003790750568612585,
+  "truncated": 0,
+  "truncation_rate": 0.0,
+  "errors": 0,
+  "error_rate": 0.0,
+  "official": {
+    "accuracy_2d_ade20k": 0.764612954186414,
+    "accuracy_2d_coco": 0.8807453416149068,
+    "accuracy_2d": 0.8226791479006603,
+    "accuracy_3d_omni3d": 0.9125,
+    "accuracy_3d": 0.9125,
+    "cvbench_accuracy": 0.8675895739503301,
+    "cvbench_accuracy_percent": 86.75895739503301,
+    "computable": true
+  },
+  "plain_sample_accuracy": 0.8673237300985596,
+  "groups": {
+    "by_type": {
+      "2D": {
+        "n": 1438,
+        "correct": 1193,
+        "accuracy": 0.8296244784422809,
+        "accuracy_percent": 82.9624478442281,
+        "invalid": 1,
+        "invalid_rate": 0.0006954102920723226
+      },
+      "3D": {
+        "n": 1200,
+        "correct": 1095,
+        "accuracy": 0.9125,
+        "accuracy_percent": 91.25,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    },
+    "by_task": {
+      "Count": {
+        "n": 788,
+        "correct": 572,
+        "accuracy": 0.7258883248730964,
+        "accuracy_percent": 72.58883248730965,
+        "invalid": 1,
+        "invalid_rate": 0.0012690355329949238
+      },
+      "Depth": {
+        "n": 600,
+        "correct": 558,
+        "accuracy": 0.93,
+        "accuracy_percent": 93.0,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "Distance": {
+        "n": 600,
+        "correct": 537,
+        "accuracy": 0.895,
+        "accuracy_percent": 89.5,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "Relation": {
+        "n": 650,
+        "correct": 621,
+        "accuracy": 0.9553846153846154,
+        "accuracy_percent": 95.53846153846153,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    },
+    "by_source": {
+      "ADE20K": {
+        "n": 633,
+        "correct": 484,
+        "accuracy": 0.764612954186414,
+        "accuracy_percent": 76.46129541864138,
+        "invalid": 1,
+        "invalid_rate": 0.001579778830963665
+      },
+      "COCO": {
+        "n": 805,
+        "correct": 709,
+        "accuracy": 0.8807453416149068,
+        "accuracy_percent": 88.07453416149069,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "Omni3D": {
+        "n": 1200,
+        "correct": 1095,
+        "accuracy": 0.9125,
+        "accuracy_percent": 91.25,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    },
+    "by_type_task": {
+      "2D/Count": {
+        "n": 788,
+        "correct": 572,
+        "accuracy": 0.7258883248730964,
+        "accuracy_percent": 72.58883248730965,
+        "invalid": 1,
+        "invalid_rate": 0.0012690355329949238
+      },
+      "2D/Relation": {
+        "n": 650,
+        "correct": 621,
+        "accuracy": 0.9553846153846154,
+        "accuracy_percent": 95.53846153846153,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Depth": {
+        "n": 600,
+        "correct": 558,
+        "accuracy": 0.93,
+        "accuracy_percent": 93.0,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Distance": {
+        "n": 600,
+        "correct": 537,
+        "accuracy": 0.895,
+        "accuracy_percent": 89.5,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    },
+    "by_type_task_source": {
+      "2D/Count/ADE20K": {
+        "n": 342,
+        "correct": 210,
+        "accuracy": 0.6140350877192983,
+        "accuracy_percent": 61.40350877192982,
+        "invalid": 1,
+        "invalid_rate": 0.0029239766081871343
+      },
+      "2D/Count/COCO": {
+        "n": 446,
+        "correct": 362,
+        "accuracy": 0.8116591928251121,
+        "accuracy_percent": 81.16591928251121,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "2D/Relation/ADE20K": {
+        "n": 291,
+        "correct": 274,
+        "accuracy": 0.9415807560137457,
+        "accuracy_percent": 94.15807560137458,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "2D/Relation/COCO": {
+        "n": 359,
+        "correct": 347,
+        "accuracy": 0.9665738161559888,
+        "accuracy_percent": 96.65738161559888,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Depth/Omni3D": {
+        "n": 600,
+        "correct": 558,
+        "accuracy": 0.93,
+        "accuracy_percent": 93.0,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      },
+      "3D/Distance/Omni3D": {
+        "n": 600,
+        "correct": 537,
+        "accuracy": 0.895,
+        "accuracy_percent": 89.5,
+        "invalid": 0,
+        "invalid_rate": 0.0
+      }
+    }
+  },
+  "invalid_reasons": {
+    "malformed_final_answer": 1
+  },
+  "finish_reasons": {
+    "eos": 2638
+  },
+  "timing_seconds": {
+    "model_load": 3.5641901260241866,
+    "warmup": 2.038793517043814,
+    "preprocess": {
+      "n": 2638,
+      "mean": 0.05937260526590405,
+      "median": 0.030773014528676867,
+      "p95": 0.20224044963251803,
+      "max": 0.5820313331205398,
+      "sum": 156.6249326914549
+    },
+    "image_load": {
+      "n": 2638,
+      "mean": 0.011087463974671677,
+      "median": 0.005129665951244533,
+      "p95": 0.03991425064159561,
+      "max": 0.3054369930177927,
+      "sum": 29.248729965183884
+    },
+    "generate": {
+      "n": 2638,
+      "mean": 10.56694138260589,
+      "median": 5.042715520830825,
+      "p95": 35.59838263206184,
+      "max": 283.58579092496075,
+      "sum": 27875.591367314337
+    },
+    "end_to_end": {
+      "n": 2638,
+      "mean": 10.640557829791593,
+      "median": 5.094408001052216,
+      "p95": 35.71132866725094,
+      "max": 283.69601524504833,
+      "sum": 28069.791554990225
+    }
+  },
+  "throughput": {
+    "samples_per_second_generate": 0.09463476362669027,
+    "samples_per_second_e2e": 0.09398003525719159,
+    "tokens_per_second_generate": 11.220138646699265,
+    "note": "tokens/s includes prefill + decode; it is not pure decode speed"
+  },
+  "tokens": {
+    "generated": {
+      "n": 2638,
+      "mean": 118.56254738438211,
+      "median": 78.0,
+      "p95": 269.3000000000002,
+      "max": 2930,
+      "sum": 312768
+    },
+    "thinking": {
+      "n": 2638,
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "max": 0,
+      "sum": 0
+    },
+    "answer": {
+      "n": 2638,
+      "mean": 118.56254738438211,
+      "median": 78.0,
+      "p95": 269.3000000000002,
+      "max": 2930,
+      "sum": 312768
+    },
+    "prompt": {
+      "n": 2638,
+      "mean": 754.2391963608794,
+      "median": 395.0,
+      "p95": 1985.0,
+      "max": 3684,
+      "sum": 1989683
+    }
+  },
+  "vram": {
+    "model_load": {
+      "allocated_gib": 8.455068588256836,
+      "reserved_gib": 8.466796875,
+      "peak_allocated_gib": 8.455069065093994,
+      "peak_reserved_gib": 8.466796875,
+      "gpu_used_gib": 19.37255859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "per_sample_peak_allocated_gib_mean": 8.656008249706531,
+    "per_sample_peak_allocated_gib_max": 9.218606948852539,
+    "global_peak_allocated_gib": 9.218606948852539,
+    "global_peak_reserved_gib": 9.30078125,
+    "gpu_used_gib_end": 21.4989013671875
+  },
+  "subset": false,
+  "experiment": {
+    "mode": "off",
+    "enable_thinking": false,
+    "max_new_tokens": 8192,
+    "do_sample": false,
+    "split": "all",
+    "limit": null,
+    "stratified": false,
+    "seed": 0,
+    "model_path": "Qwen/Qwen3.5-4B",
+    "dataset_dir": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench",
+    "dataset_files": {
+      "test_2d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_2d.parquet",
+        "size": 184906137,
+        "mtime_ns": 1793184656243391200
+      },
+      "test_3d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_3d.parquet",
+        "size": 219902227,
+        "mtime_ns": 1793184270081739778
+      }
+    },
+    "prompt_template": "\n\nAfter answering the question, put the final choice on a separate line using exactly this format: FINAL_ANSWER: (X)\nwhere X is one of the provided option letters.",
+    "prompt_template_sha1": "cd11a2a3d0ec89fdacf1b321c824f708b1c503b5",
+    "parser_version": "1.0",
+    "selected_uids_sha1": "2a8a5c968bbe2067f31fb44231580f4c50740604",
+    "selected_samples": 2638,
+    "torch": "2.10.0+cu128",
+    "transformers": "5.20.2",
+    "python": "3.11.18",
+    "fingerprint": "e27d0cd9f90a45be303c24b311481fe4898b1492",
+    "model_name": "Qwen3.5-4B",
+    "model_resolved_path": "/home/20261024_1/.cache/huggingface/hub/models--Qwen--Qwen3.5-4B/snapshots/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "model_snapshot": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "model_load_seconds": 3.5641901260241866,
+    "vram_after_load": {
+      "allocated_gib": 8.455068588256836,
+      "reserved_gib": 8.466796875,
+      "peak_allocated_gib": 8.455069065093994,
+      "peak_reserved_gib": 8.466796875,
+      "gpu_used_gib": 19.37255859375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "warmup_seconds": 2.038793517043814,
+    "global_peak_allocated_gib": 9.218606948852539,
+    "global_peak_reserved_gib": 9.30078125,
+    "gpu_used_gib_end": 21.4989013671875,
+    "gpu_free_gib_end": 73.461181640625,
+    "total_wall_seconds": 28071.924488789868,
+    "completed_samples": 2638,
+    "expected_samples": 2638,
+    "status": "completed",
+    "attn_implementation": "sdpa",
+    "cpu_offload": null,
+    "hf_device_map": {},
+    "python_executable": "/home/20261024_1/.local/share/mamba/envs/vlm-test/bin/python",
+    "conda_env": "vlm-test",
+    "cuda_version": "12.8",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "gpu_shared": true,
+    "gpu_processes_at_end": [
+      {
+        "pid": "1625758",
+        "process_name": "python",
+        "used_memory": "10350 MiB"
+      },
+      {
+        "pid": "1778951",
+        "process_name": "python",
+        "used_memory": "10186 MiB"
+      },
+      {
+        "pid": "2042896",
+        "process_name": "/home/20261024_1/miniconda3/envs/DRL_migrated/bin/python",
+        "used_memory": "1292 MiB"
+      }
+    ]
+  },
+  "dataset_distribution": {
+    "total": 2638,
+    "by_type": {
+      "2D": 1438,
+      "3D": 1200
+    },
+    "by_task": {
+      "Count": 788,
+      "Depth": 600,
+      "Distance": 600,
+      "Relation": 650
+    },
+    "by_source": {
+      "ADE20K": 633,
+      "COCO": 805,
+      "Omni3D": 1200
+    },
+    "by_type_task_source": {
+      "2D/Count/ADE20K": 342,
+      "2D/Count/COCO": 446,
+      "2D/Relation/ADE20K": 291,
+      "2D/Relation/COCO": 359,
+      "3D/Depth/Omni3D": 600,
+      "3D/Distance/Omni3D": 600
+    },
+    "choice_counts": {
+      "2": 1850,
+      "4": 493,
+      "5": 156,
+      "6": 139
+    },
+    "answer_letters": {
+      "A": 1112,
+      "B": 1104,
+      "C": 169,
+      "D": 167,
+      "E": 63,
+      "F": 23
+    }
+  },
+  "experiment_mode": "off",
+  "aborted": false
+}
