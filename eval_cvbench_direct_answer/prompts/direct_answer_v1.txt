@@ -1,0 +1,10 @@
+Answer the multiple-choice question directly.
+
+Do not provide explanations, reasoning, or analysis.
+Output exactly one line in the following format:
+
+FINAL_ANSWER: (X)
+
+where X is one of the provided option letters.
+
+Do not output anything else.

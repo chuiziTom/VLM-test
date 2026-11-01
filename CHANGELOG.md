@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.3.0] - 2026-11-01
+
+### Features
+- 新增 `eval_cvbench_direct_answer/`：Xiaomi-Lens-0 与 Qwen3.5-4B 的统一
+  **Direct Answer（Thinking Off）** 评测，`max_new_tokens=64`，2638 条全量。
+- 新增统一 Prompt `prompts/direct_answer_v1.txt` 与整段严格解析器
+  `common/direct_parser.py`（17 个单元测试）。
+- 新增历史实验索引 `EXPERIMENT_INDEX.md` 与机器可读清单
+  `experiment_manifest.json`，区分 `legacy_max_new_tokens_8192` 与
+  `direct_answer_think_off_max_new_tokens_64_v1`。
+- 新增三份报告：两个单模型报告 + 一份综合对比报告。
+
+### Design Rationale
+- **只读复用**原脚本：数据加载、指标、模型适配器按文件路径导入，
+  未修改任何历史脚本或预测文件。
+- **不移动历史目录**：原有 README/脚本直接引用 `results/thinking_off|on`，
+  因此只建立命名映射，避免破坏断点续跑与复现。
+- **严格解析**：整段必须恰好是 `FINAL_ANSWER: (X)`，任何额外文字
+  （包括 `(A) 1` 这种“选项+计数”）都记为 Invalid 并计入分母。
+- **同一 Prompt、同一生成长度**：两个模型逐字符使用同一指令，
+  Prompt SHA-1 记录在 `metrics.json`。
+
+### Notes & Caveats
+- Direct Answer 与历史 8192 实验的 Prompt、生成长度、解析规则不同，
+  **不能作为严格对照组**；报告中的跨实验比较均标注为参考。
+- Qwen 出现 24 条（0.91%）格式违规，全部为 `(A) 1` 类输出；
+  Xiaomi 为 0 条。
+- GPU 全程与其他任务共享，速度指标只作参考。
+
 ## [0.2.0] - 2026-10-29
 
 ### Features
