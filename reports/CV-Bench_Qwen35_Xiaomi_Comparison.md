@@ -1,455 +1,374 @@
-# CV-Bench 评测报告：Qwen3.5-4B 与 Xiaomi-Lens-0（Thinking Off / On）
+# CV-Bench 双模型综合评测报告：Xiaomi-Lens-0 与 Qwen3.5-4B
 
-生成日期：2026-11-01
-数据来源：本仓库已有的全量预测文件，未重新运行任何模型推理。
+> **报告版本：** 2026-11-01  
+> **评测范围：** 静态图片输入；Xiaomi-Lens-0、Qwen3.5-4B；历史 Thinking Off / On（max_new_tokens=8192）及新增 Direct Answer（Thinking Off，max_new_tokens=64）。  
+> **数据来源：** 本仓库已完成的逐样本预测、metrics、experiment 配置及官方模型资料。没有在本报告生成过程中重新运行模型推理。
 
----
+本文件作为项目中 CV-Bench 实验的统一入口。原始预测、指标和脚本仍保留在各自目录；本报告汇总结果，不替代原始记录。
 
-## 0. 核心结论（先看这里）
+## 1. 核心结论
 
-1. **四种运行全部已完成**：Qwen3.5-4B Off / On、Xiaomi-Lens-0 Off / On 均为 **2638 / 2638** 样本，无缺失、无重复、无坏行，`status: completed`、`aborted: false`。
-2. **无需续跑**：Qwen Thinking On 已于 2026-10-31 01:48 正常跑完（此前会话中断时后台进程已自然结束）。
-3. **指标完全可复现**：从 `raw_generation` 重新解析并复算后，四种运行的官方总分与原 `metrics.json` **逐项一致（差值为 0）**。
-4. **官方 CV-Bench 总分**：
+1. **六组全量实验均已完成**：两个模型各运行了历史 Thinking Off、Thinking On 和 Direct Answer Thinking Off；每组均为 2,638 / 2,638 条。没有因本次整理重新推理。
+2. **Direct Answer 结果：** Xiaomi-Lens-0 官方 CV-Bench 得分为 **87.04%**，Qwen3.5-4B 为 **85.88%**，Xiaomi 高 **1.16 个百分点（pp）**。逐题配对 McNemar 检验 p=0.0159。
+3. **历史 8192 配置中，开启 Thinking 没有提高官方总分：** Xiaomi 从 87.76% 降至 87.29%；Qwen 从 86.76% 降至 85.34%。Qwen Thinking On 有 172 条（6.52%）达到 8,192 Token 上限仍未给出可解析最终答案。
+4. **Direct Answer 显著缩短输出和耗时：** 平均生成长度约为 Xiaomi 8 Token、Qwen 9.98 Token；平均端到端耗时分别约 0.299 秒和 0.334 秒。相较历史 Thinking Off，速度改善同时伴随 Prompt、最大生成长度和解析协议变化，不能将改善全部归因于关闭 Thinking。
+5. **任务层面：** Direct Answer 下 Xiaomi 在 Count、Relation、Depth 三项略优；Qwen 在 Distance 略优。两者最明显的差异集中在 2D Object Counting。
+6. **性能数据不是独占 GPU 基准：** 运行时存在其他 GPU 进程，且两模型的 Transformers 版本和 Attention 后端不同。准确率可按统一数据集和评分规则比较；绝对推理速度只能作为当前机器、当前并发条件下的参考值。
 
-   | 模型 | Thinking Off | Thinking On | 变化 |
-   |---|---:|---:|---:|
-   | Xiaomi-Lens-0 | **87.76%** | **87.29%** | −0.48 pp |
-   | Qwen3.5-4B | **86.76%** | **85.34%** | −1.42 pp |
+## 2. 模型官方资料与能力范围
 
-5. **两个模型开启 Thinking 后总分都下降**，但原因不同：
-   - Qwen 的 172 条（6.52%）输出在 `max_new_tokens=8192` 内**没有写出 `</think>` 和最终答案**，按协议全部计入错误；
-   - Xiaomi 的 Thinking 更“克制”（平均 302 个思考 token），分数只轻微下降。
-6. **若只看能正常给出答案的样本**，Qwen On 的准确率反而最高（91.08%），说明其问题主要是**稳定性/收敛性**，而不是空间推理能力不足。
-7. **Xiaomi-Lens-0 总体略优**，但在配对检验下，**Off 模式两者的差距不显著**（p = 0.084）；**On 模式下 Xiaomi 显著更好**（p = 0.001）。
-8. **耗时/吞吐/显存不可直接横向比较**：两个模型使用不同 Attention 实现，且本机 GPU 全程与其他任务共享。
+### 2.1 Xiaomi-Lens-0
 
----
-
-## 1. 实验目的
-
-CV-Bench 用真实场景图片考察视觉语言模型的**空间理解**能力，分为：
-
-- **2D**：物体计数（Count）、二维空间关系（Relation）；
-- **3D**：深度顺序（Depth）、相对距离（Distance）。
-
-本实验比较两个 4B 级视觉语言模型：
-
-- **Qwen3.5-4B**：通用 VLM，作为“通用能力”基线；
-- **Xiaomi-Lens-0**：面向视觉/空间任务专门化的模型。
-
-同时对每个模型比较 **Thinking Off / On**：关闭思考时模型直接作答；开启思考时先在 `<think>` 内推理，再给出 `FINAL_ANSWER`。目的是回答两个问题：
-
-1. 专门化模型在空间理解上是否真的优于通用模型？
-2. 增加推理 token 能否换来准确率提升，成本是否值得？
-
----
-
-## 2. 测试环境
-
-| 项目 | 值 |
+| 项目 | 官方资料 |
 |---|---|
-| 操作系统 | Linux 7.0.0-38-generic（x86_64, glibc 2.39） |
+| Hugging Face 模型 | [SeerRay-Lab/Xiaomi-Lens-0](https://huggingface.co/SeerRay-Lab/Xiaomi-Lens-0) |
+| 官方代码仓库 | [SeerRay-Lab/Xiaomi-Lens-0](https://github.com/SeerRay-Lab/Xiaomi-Lens-0) |
+| 技术报告 | [Xiaomi-Lens-0 Technical Report（arXiv:2610.23279）](https://arxiv.org/abs/2610.23279) |
+| 项目主页 | [Xiaomi-Lens-0 Project Page](https://seerray-lab.github.io/Xiaomi-Lens-0/) |
+| 官方演示 | [官方概览视频（MP4）](../Xiaomi-Lens-0/docs/assets/video/xiaomi_lens_0_overview.mp4)；[官方演示 GIF](../Xiaomi-Lens-0/docs/assets/samples/showcase_all_domains.gif) |
+
+![Xiaomi-Lens-0 官方六类能力演示](../Xiaomi-Lens-0/docs/assets/samples/showcase_all_domains.gif)
+
+Xiaomi-Lens-0 是一个基于 Qwen3.5 构建的 4B 多模态模型，重点改善细粒度视觉区域理解。它在共享视觉特征上增加轻量 Mask Decoder，并利用特殊的 mask token 状态作为区域查询，使模型可以输出文本、边界框和像素级 Mask。官方报告覆盖六类能力：Referring Expression Comprehension、Referring Expression Segmentation、多实例 Grounding、Reasoning Segmentation、Embodied Referring 和 Fine-Grained Perception。官方报告称其在 RefCOCO / RefCOCO+ / RefCOCOg 八个 split 的指代表达理解上平均比 Qwen3.5 提升 5.6 分；该结果属于官方论文实验，不是本项目的 CV-Bench 成绩。
+
+### 2.2 Qwen3.5-4B
+
+| 项目 | 官方资料 |
+|---|---|
+| Hugging Face 模型 | [Qwen/Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B) |
+| 官方技术介绍 / 引用 | [Qwen3.5: Towards Native Multimodal Agents（Qwen Team）](https://qwen.ai/blog?id=qwen3.5) |
+| Transformers 使用说明 | [Qwen3.5-4B Model Card / Quickstart](https://huggingface.co/Qwen/Qwen3.5-4B) |
+| 官方示例图片 | [模型卡中的图像示例](https://qianwen-res.oss-accelerate.aliyuncs.com/Qwen3.5/demo/CI_Demo/mathv-1327.jpg) |
+
+![Qwen3.5 官方模型卡图像示例](https://qianwen-res.oss-accelerate.aliyuncs.com/Qwen3.5/demo/CI_Demo/mathv-1327.jpg)
+
+Qwen3.5-4B 是约 4B 参数的原生视觉语言模型，模型卡给出的结构为 32 层混合架构：每组包含 3 层 Gated DeltaNet 线性注意力和 1 层 Gated Attention；原生上下文长度为 262,144 Token。模型卡公布的评测覆盖语言、视觉语言、空间智能、视频理解、视觉 Agent 等方向。空间智能公开指标包括 ERQA、CountBench、RefCOCO、EmbSpatialBench、RefSpatialBench、LingoQA 等。以上均为 Qwen 官方模型卡结果，并非本项目重新运行的成绩。
+
+**论文说明：** Qwen3.5-4B 模型卡提供的官方引用指向 Qwen Team 的技术博客；本报告未将其误写为独立的 4B arXiv 论文。
+
+## 3. 本地部署与测试环境
+
+### 3.1 测试机器
+
+| 项目 | 实验记录 |
+|---|---|
+| 操作系统 | Ubuntu 24.04.5 LTS；内核记录为 Linux 7.0.0-38-generic |
 | GPU | NVIDIA RTX PRO 6000 Blackwell Workstation Edition |
-| GPU 显存 | 94.96 GiB（97887 MiB） |
-| NVIDIA Driver | 580.178.04（驱动侧 CUDA 13.0） |
-| CUDA Runtime | 12.8（PyTorch `2.10.0+cu128`） |
-| Python | 3.11.18（两个环境相同） |
-| PyTorch | 2.10.0+cu128（两个环境相同） |
-| Transformers | Qwen：**5.20.2**（`vlm-test`）；Xiaomi：**5.4.0**（`xiaomi-lens`） |
-| Micromamba 环境 | Qwen：`vlm-test`；Xiaomi：`xiaomi-lens` |
-| 模型精度 | 两个模型均为 `bfloat16` |
-| Attention 实现 | Qwen：`sdpa`；Xiaomi：`flash_attention_2` |
-| 生成设置 | `do_sample=False`（贪心）、`max_new_tokens=8192`、`seed=0` |
-| 模型权重 | Qwen `851bf6e8…`；Xiaomi `68f57cdd…`（均为本地缓存快照） |
+| 显存 | 96 GB 级别；运行时 PyTorch 记录总显存约 94.96 GiB（环境记录约 97,887 MiB） |
+| GPU Compute Capability | 12.0（sm_120） |
+| NVIDIA Driver | 580.178.04；驱动侧显示支持 CUDA 13.0 |
+| PyTorch CUDA Runtime | 12.8 |
+| Python | 3.11.18 |
+| PyTorch | 2.10.0+cu128 |
+| CPU / 系统内存 | 原实验指标文件未记录具体型号与容量，故不补写推测值 |
 
-**GPU 共享情况**：Qwen Off 运行时 `gpu_shared=true`（同时有其他 Python 进程占用约 10 GiB）；Xiaomi 运行时整卡已占用约 89.8 GiB。因此本报告中所有**绝对耗时只能作参考**。
+注意：nvidia-smi 显示的 CUDA 13.0 是驱动支持级别；实验使用的是 PyTorch Wheel 自带的 CUDA 12.8 Runtime。不要把两者混为一谈。
 
----
+### 3.2 两个模型各自的环境
 
-## 3. 数据集
+| 配置 | Xiaomi-Lens-0 | Qwen3.5-4B |
+|---|---|---|
+| Micromamba 环境 | xiaomi-lens | vlm-test |
+| Python | 3.11.18 | 3.11.18 |
+| PyTorch | 2.10.0+cu128 | 2.10.0+cu128 |
+| Transformers | 5.4.0 | 5.20.2 |
+| 精度 | BF16 | BF16 |
+| Attention | flash_attention_2 | SDPA |
+| 模型权重 | Hugging Face 本地缓存 | Hugging Face 本地缓存 |
 
-本地路径：`dataset/CV-Bench/`，只使用测试集 `test_2d.parquet` 与 `test_3d.parquet`。四种运行的 `experiment.json` 记录的文件大小与修改时间完全一致，说明**使用的是同一份数据**。
+两个环境不能混用：Xiaomi 相关脚本使用 xiaomi-lens；Qwen 相关脚本使用 vlm-test。模型权重没有放入 Git 仓库。
 
-| type | task | source | 数量 |
+### 3.3 本地部署与评测入口
+
+**Xiaomi-Lens-0**
+
+- [官方单图推理脚本 infer.py](../Xiaomi-Lens-0/infer.py)
+- [本地评测适配器](../Xiaomi-Lens-0/eval_xiaomi_cvbench/xiaomi_lens_adapter.py)
+- [Direct Answer 评测入口](../eval_cvbench_direct_answer/run_xiaomi_direct_answer.py)
+- 官方推理方式：使用官方 infer.py 加载 SeerRay-Lab/Xiaomi-Lens-0，输入单张图片和文本指令，可输出文本、BBox / Mask。
+
+示例命令（路径按项目根目录执行）：
+
+    micromamba run -n xiaomi-lens python Xiaomi-Lens-0/infer.py \
+      --checkpoint SeerRay-Lab/Xiaomi-Lens-0 \
+      --image dataset/CV-Bench/samples/2D/2d_03.png \
+      --text "Describe or locate the target in this image." \
+      --output result.jpg --draw-bbox
+
+**Qwen3.5-4B**
+
+- [官方 Transformers 模型卡与加载示例](https://huggingface.co/Qwen/Qwen3.5-4B)
+- [本地模型适配器](../eval_qwen35_cvbench/model_qwen35.py)
+- [Direct Answer 评测入口](../eval_cvbench_direct_answer/run_qwen35_direct_answer.py)
+
+官方 Transformers 方式使用 AutoProcessor 与 AutoModelForMultimodalLM，调用 Processor 的 Chat Template 构造图文输入，再调用 model.generate()。本项目没有使用 vLLM / SGLang；Qwen 的本地评测入口复用现有 Transformers 适配器。
+
+示例命令：
+
+    micromamba run -n vlm-test python \
+      eval_cvbench_direct_answer/run_qwen35_direct_answer.py \
+      --limit 1 --show 1
+
+**全量评测复现入口**（仅在确实需要重新运行时使用；不要无意覆盖现有结果）：
+
+    micromamba run -n xiaomi-lens python -B \
+      eval_cvbench_direct_answer/run_xiaomi_direct_answer.py --resume
+
+    micromamba run -n vlm-test python -B \
+      eval_cvbench_direct_answer/run_qwen35_direct_answer.py --resume
+
+## 4. 官方任务与本项目实际测试范围
+
+### 4.1 官方模型能力 / 官方公开评测
+
+- **Xiaomi-Lens-0：** 官方测试包括指代表达理解、指代表达分割、多实例定位、推理分割、具身指代和细粒度感知；其中部分任务输出 BBox 或 Mask。
+- **Qwen3.5-4B：** 官方模型卡公布语言、视觉语言、空间智能、视频理解、视觉 Agent 等基准结果；空间任务包含计数、空间关系和具身空间类 benchmark。
+
+上述为官方发布的能力与结果介绍，**本项目没有重新执行这些官方完整 benchmark**。
+
+### 4.2 本项目自行测试：CV-Bench 静态图片
+
+本项目实际完成的是**单张静态图片输入**：模型接收一张图片和对应的自然语言问题 / 选项，输出多项选择答案，再与 Ground Truth 比较。
+
+- 已测试：静态 RGB 图片。
+- 未测试：连续视频帧、视频理解、跨帧时序推理。本报告不对视频能力作结论。
+- Xiaomi 官方单图推理脚本还支持 BBox / Mask 输出；但 CV-Bench 评测只计算选择题文本答案，不额外解码或评分 Mask。
+
+## 5. 数据集：CV-Bench
+
+- [Hugging Face 数据集](https://huggingface.co/datasets/nyu-visionx/CV-Bench)
+- [Cambrian-1 论文（CV-Bench 来源论文，arXiv:2406.16860）](https://arxiv.org/abs/2406.16860)
+- [Cambrian 官方主页](https://cambrian-mllm.github.io/)
+- 本地测试文件：dataset/CV-Bench/test_2d.parquet、test_3d.parquet。
+
+CV-Bench 是 Cambrian-1 提出的视觉中心 Benchmark，共 2,638 条人工检查的图文选择题，复用 ADE20K、COCO 和 Omni3D 图像及标注，考察模型的 2D / 3D 基础空间理解。
+
+### 5.1 任务与样本分布
+
+| 维度 | 任务 | 数据来源 | 样本数 |
 |---|---|---|---:|
-| 2D | Count | ADE20K | 342 |
-| 2D | Count | COCO | 446 |
-| 2D | Relation | ADE20K | 291 |
-| 2D | Relation | COCO | 359 |
-| 3D | Depth | Omni3D | 600 |
-| 3D | Distance | Omni3D | 600 |
-| | | **合计** | **2638** |
+| 2D | Object Counting（Count） | ADE20K | 342 |
+| 2D | Object Counting（Count） | COCO | 446 |
+| 2D | Spatial Relationship（Relation） | ADE20K | 291 |
+| 2D | Spatial Relationship（Relation） | COCO | 359 |
+| 3D | Depth Order（Depth） | Omni3D | 600 |
+| 3D | Relative Distance（Distance） | Omni3D | 600 |
+| **合计** | | | **2,638** |
 
-- 2D 共 1438 条，3D 共 1200 条。
-- 选项数不固定：3D 全为 2 选项；2D 为 2–6 选项，共 1850 / 493 / 156 / 139 条。
-- 样本 uid 形如 `2D:1234`，四份预测文件使用同一套 uid，可逐题对齐。
+- 2D：1,438 条；3D：1,200 条。
+- Count：788 条；Relation：650 条；Depth：600 条；Distance：600 条。
+- 来源：ADE20K 633 条、COCO 805 条、Omni3D 1,200 条。
+- 选项数量不固定，数据中有 2、4、5、6 选项题；解析器按每题真实选项集合校验，不固定为 A–D。
 
----
+### 5.2 样本示例
 
-## 4. 测试流程
+以下为本地样例目录中的示例图和标注问题，便于理解任务类型。
 
-```text
-读取 CV-Bench 测试样本（2638 条）
-        ↓
-从 parquet 懒加载图片，读取问题与选项
-        ↓
-instruction = 官方 prompt + 统一的 FINAL_ANSWER 格式要求
-        ↓
-apply_chat_template（enable_thinking = False / True）
-        ↓
-校验渲染后的 prompt 后缀是否与请求模式一致
-        ↓
-模型贪心生成（max_new_tokens = 8192）
-        ↓
-按 </think> 切出“思考区 / 最终回答区”
-        ↓
-只在最终回答区逐行严格匹配 FINAL_ANSWER: (X)
-        ↓
-与 Ground Truth 比较，无效答案按错误计入分母
-        ↓
-记录耗时、Token、显存，按 type/task/source 汇总
-        ↓
-写入 predictions.jsonl / metrics.json / summary.csv
-```
+![CV-Bench 2D 样例概览](../dataset/CV-Bench/samples/2d_overview.jpg)
 
-模型只加载一次；Thinking Off 与 On 使用同一份权重、同一张图片、同一条指令，仅 chat template 的布尔开关不同。
+![CV-Bench 3D 样例概览](../dataset/CV-Bench/samples/3d_overview.jpg)
 
----
-
-## 5. 评测方法
-
-### 5.1 输入构造
-
-图片以 PIL 形式进入 chat template，展开为 `<|vision_start|><|image_pad|><|vision_end|>`，再由 Processor 切成图像 patch 并归一化。文本部分为数据集自带的 `prompt`（问题 + 选项）加上统一的格式指令：
-
-```text
-After answering the question, put the final choice on a separate line using exactly this format:
-FINAL_ANSWER: (X)
-where X is one of the provided option letters.
-```
-
-两个模型的该指令 `sha1` 完全相同（`cd11a2a3…`），`instruction = record.prompt + FORMAT_INSTRUCTION` 的拼接代码也一致。
-
-### 5.2 Thinking 控制
-
-两个模型都使用 checkpoint 自带 chat template 的 `enable_thinking` 布尔参数：
-
-| 模式 | 渲染后的 prompt 结尾 |
+| 任务 | 样例问题 |
 |---|---|
-| Off | `<think>\n\n</think>\n\n` |
-| On | `<think>\n` |
+| 2D Count | How many dividers are in the image? |
+| 2D Relation | Considering the relative positions of the bus and the truck, where is the bus located with respect to the truck? |
+| 3D Depth | Which object is closer to the camera, the table or the lamp? |
+| 3D Distance | Which object is closer to the truck, the trailer or the barrier? |
 
-渲染后会检查 prompt 后缀（`mode_verified`），防止模板变化导致“开关看起来改了、实际没改”。两个模型均**不支持** Adaptive Thinking，因此不提供第三组结果。
+样例标注可查看：[2D annotations.csv](../dataset/CV-Bench/samples/2D/annotations.csv) · [3D annotations.csv](../dataset/CV-Bench/samples/3D/annotations.csv)。
 
-### 5.3 答案解析（严格匹配）
+## 6. 评测流程与方法
 
-1. 在第一个 `</think>` 处切分，**只在最终回答区解析**；
-2. 逐行匹配整行 `FINAL_ANSWER: (X)`；
-3. 字母必须属于本题真实存在的选项集合（A–F 动态确定）；
-4. 出现两个不同选项 → `conflicting_final_answers`；
-5. 解析失败 → `invalid`，**仍然计入分母，按答错处理**。
+### 6.1 通用流程
 
-不搜索全文中的零散字母，不做选项文字模糊匹配，不从思考过程中猜答案，也不根据标准答案反推。
+1. 读取本地 test_2d.parquet 和 test_3d.parquet。
+2. 解码图片，读取原始 prompt、选项、任务类型、来源和标准答案。
+3. 将图片与文本送入各模型对应的 Processor / Chat Template。
+4. 使用贪心解码（do_sample=False）生成答案。
+5. 按实验协议分离 Thinking 内容或处理 Direct Answer 输出。
+6. 严格解析最终选项，与 Ground Truth 比较。
+7. 保存逐样本预测、耗时、Token 数、显存和错误原因。
+8. 按 2D / 3D、task、source 汇总，并计算官方 CV-Bench 总分。
 
-### 5.4 Invalid、截断与失败
+两个模型均使用 Batch Size = 1、BF16；模型各自只加载一次。图像预处理由各自模型 Processor 执行，因此视觉 Token 数和内部预处理不完全相同。
 
-| 情况 | 处理 |
-|---|---|
-| 格式错误（如加粗、小写、缺括号） | 记 `invalid`，算错 |
-| 达到 8192 token 上限仍未给出答案 | 记 `truncated` + `invalid`，算错 |
-| 推理异常 | 记 `error`，算错 |
+### 6.2 历史实验：Thinking Off / On，max_new_tokens=8192
 
-**无效答案、失败、截断都不从分母中删除**，这是本评测与“只统计有效回答”的根本区别。
+历史 experiment 配置实际记录的最大生成长度是 **8,192 Token（不是 8,193）**。该值是生成上限，不代表每题都会生成 8,192 Token。
 
-### 5.5 官方加权分数
+- Thinking Off：enable_thinking=False。
+- Thinking On：enable_thinking=True。
+- 统一要求模型在最终回答中输出 FINAL_ANSWER: (X)。
+- Thinking On 时，解析器先按 </think> 分离思考区与最终回答区，只在最终回答区解析。
+- 达到 8,192 Token 上限仍没有合法最终答案的样本记为截断 / Invalid，并按错误计入分母。
 
-CV-Bench 官方不是全样本简单平均，而是按数据来源先算再平均：
+### 6.3 新实验：Direct Answer，Thinking Off，max_new_tokens=64
 
-```text
-Accuracy_2D = (Accuracy_ADE20K + Accuracy_COCO) / 2
-Accuracy_3D = Accuracy_Omni3D
-CV-Bench Accuracy = (Accuracy_2D + Accuracy_3D) / 2
-```
+实验规范名：direct_answer_think_off_max_new_tokens_64_v1。
 
-报告中同时给出“全部样本普通 Accuracy”。两者不同是因为三个来源样本量不等（633 / 805 / 1200）。**对外比较应使用官方加权总分。**
+两个模型均使用官方 Chat Template 的 enable_thinking=False，并追加完全相同的 Direct Answer 指令：
 
----
+    Answer the multiple-choice question directly.
 
-## 6. 结果完整性核验
+    Do not provide explanations, reasoning, or analysis.
+    Output exactly one line in the following format:
 
-### 6.1 检查方法
+    FINAL_ANSWER: (X)
 
-本次没有重新运行模型，而是用独立脚本 `reports/analysis/verify_results.py` 做只读核验：
+    where X is one of the provided option letters.
 
-1. 用 CV-Bench 的 2638 个 uid 检查覆盖、重复与缺失；
-2. 用原始 `raw_generation` 重新执行严格解析，与已保存的 `prediction` 对比；
-3. 用逐样本记录重新计算官方加权分数，与 `metrics.json` 对比。
+    Do not output anything else.
 
-### 6.2 核验结果
+配置：max_new_tokens=64、do_sample=False、Batch Size=1。64 是最大输出上限，不是固定生成长度。
 
-| 运行 | 记录数 | 唯一 uid | 缺失 | 重复 | 元数据不一致 | 解析不一致 | 指标不一致 |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Qwen Off | 2638 | 2638 | 0 | 0 | 0 | 0 | 0 |
-| Qwen On | 2638 | 2638 | 0 | 0 | 0 | 0 | 0 |
-| Xiaomi Off | 2638 | 2638 | 0 | 0 | 0 | 0 | 0 |
-| Xiaomi On | 2638 | 2638 | 0 | 0 | 0 | 0 | 0 |
+严格解析规则：
 
-| 运行 | 原 metrics.json 官方总分 | 独立复算 | 差值 |
+1. 只解码模型新生成的 Token。
+2. 去除已确认的结构性结束 Token。
+3. 清理首尾空白后，整段必须匹配 FINAL_ANSWER: (X)。
+4. X 必须属于当前题目真实选项集合。
+5. 有额外文字、多个答案、非法选项或空输出时，标记 Invalid；不从分析文字中猜测答案，不做选项文本模糊匹配。
+6. Invalid、截断、推理失败均保留在准确率分母中。
+
+Direct Answer 的 Prompt 版本为 v1；两个模型的 Prompt SHA-1 一致（89db6880…）。
+
+### 6.4 官方评分公式
+
+CV-Bench 官方总分不是全部样本的简单平均：
+
+    Accuracy_2D = (Accuracy_ADE20K + Accuracy_COCO) / 2
+    Accuracy_3D = Accuracy_Omni3D
+    CV-Bench Accuracy = (Accuracy_2D + Accuracy_3D) / 2
+
+报告同时给出普通样本 Accuracy 与官方加权 Accuracy。对外引用 CV-Bench 成绩时应优先使用官方加权分数。
+
+## 7. 测试结果
+
+### 7.1 官方总分与 2D / 3D
+
+| 模型 | 实验协议 | 官方 CV-Bench | 普通全样本 Accuracy | 官方 2D | 3D |
+|---|---|---:|---:|---:|---:|
+| Xiaomi-Lens-0 | Thinking Off / 8192 | **87.76%** | 87.76% | 83.44% | 92.08% |
+| Xiaomi-Lens-0 | Thinking On / 8192 | 87.29% | 87.23% | 83.41% | 91.17% |
+| Xiaomi-Lens-0 | Direct Answer Off / 64 | **87.04%** | 86.92% | 82.17% | 91.92% |
+| Qwen3.5-4B | Thinking Off / 8192 | 86.76% | 86.73% | 82.27% | 91.25% |
+| Qwen3.5-4B | Thinking On / 8192 | 85.34% | 85.14% | 79.09% | 91.58% |
+| Qwen3.5-4B | Direct Answer Off / 64 | **85.88%** | 85.63% | 80.26% | 91.50% |
+
+### 7.2 细分任务准确率
+
+| 模型 | 实验协议 | Count | Relation | Depth | Distance |
+|---|---|---:|---:|---:|---:|
+| Xiaomi-Lens-0 | Thinking Off / 8192 | 74.49% | 95.85% | 94.83% | 89.33% |
+| Xiaomi-Lens-0 | Thinking On / 8192 | 73.86% | **96.15%** | 94.17% | 88.17% |
+| Xiaomi-Lens-0 | Direct Answer Off / 64 | 72.46% | 95.23% | **96.17%** | 87.67% |
+| Qwen3.5-4B | Thinking Off / 8192 | 72.59% | 95.54% | 93.00% | **89.50%** |
+| Qwen3.5-4B | Thinking On / 8192 | 66.50% | 95.85% | 93.17% | **90.00%** |
+| Qwen3.5-4B | Direct Answer Off / 64 | 69.42% | 94.46% | 94.83% | **88.17%** |
+
+### 7.3 数据来源准确率
+
+| 模型 | 实验协议 | ADE20K | COCO | Omni3D |
+|---|---|---:|---:|---:|
+| Xiaomi-Lens-0 | Thinking Off / 8192 | 77.57% | 89.32% | 92.08% |
+| Xiaomi-Lens-0 | Thinking On / 8192 | **78.99%** | 87.83% | 91.17% |
+| Xiaomi-Lens-0 | Direct Answer Off / 64 | 77.25% | 87.08% | **91.92%** |
+| Qwen3.5-4B | Thinking Off / 8192 | 76.46% | **88.07%** | 91.25% |
+| Qwen3.5-4B | Thinking On / 8192 | 73.46% | 84.72% | **91.58%** |
+| Qwen3.5-4B | Direct Answer Off / 64 | 76.30% | 84.22% | 91.50% |
+
+### 7.4 推理速度、Token 与显存
+
+| 模型 | 实验协议 | 平均端到端耗时 | P95 端到端耗时 | 平均生成 Token | 平均 Thinking Token | Tokens/s | 峰值 allocated |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Xiaomi-Lens-0 | Thinking Off / 8192 | 4.98 s | 12.42 s | 137.24 | 0 | 27.80 | 9.36 GiB |
+| Xiaomi-Lens-0 | Thinking On / 8192 | 19.58 s | 65.45 s | 417.44 | 302.26 | 21.39 | 9.36 GiB |
+| Xiaomi-Lens-0 | Direct Answer Off / 64 | **0.299 s** | 0.404 s | **8.00** | 0 | 29.45 | 9.36 GiB |
+| Qwen3.5-4B | Thinking Off / 8192 | 10.64 s | 35.71 s | 118.56 | 0 | 11.22 | 9.22 GiB |
+| Qwen3.5-4B | Thinking On / 8192 | 37.13 s | 214.31 s | 1,365.24 | 1,301.77 | 36.79 | 9.22 GiB |
+| Qwen3.5-4B | Direct Answer Off / 64 | **0.334 s** | **0.401 s** | **9.98** | 0 | 31.30 | 9.22 GiB |
+
+说明：
+
+- Tokens/s 按生成 Token 数除以 generate 耗时计算，包含 Prefill，不是纯 Decode 速度。
+- 峰值 allocated 是 PyTorch 统计窗口内的 Tensor 峰值，不等于整张 GPU 的全局显存占用。
+- Direct Answer 下 Xiaomi 平均约 3.34 samples/s，Qwen 约 2.99 samples/s。
+- Direct Answer 模型加载时间记录为 Xiaomi 4.99 秒、Qwen 3.62 秒；历史实验分别记录 Xiaomi 23.32 秒、Qwen 3.56 秒。加载时间受进程初始化、缓存和计时边界影响，不作为模型固有速度结论。
+
+### 7.5 Invalid、截断与格式稳定性
+
+| 模型 | 实验协议 | Invalid 数 | Invalid Rate | 截断数 | 推理错误数 |
+|---|---|---:|---:|---:|---:|
+| Xiaomi-Lens-0 | Thinking Off / 8192 | 9 | 0.34% | 7 | 0 |
+| Xiaomi-Lens-0 | Thinking On / 8192 | 26 | 0.99% | 11 | 0 |
+| Xiaomi-Lens-0 | Direct Answer Off / 64 | **0** | **0.00%** | 0 | 0 |
+| Qwen3.5-4B | Thinking Off / 8192 | 1 | 0.04% | 0 | 0 |
+| Qwen3.5-4B | Thinking On / 8192 | **172** | **6.52%** | **172** | 0 |
+| Qwen3.5-4B | Direct Answer Off / 64 | 24 | 0.91% | 0 | 0 |
+
+Qwen Direct Answer 的 24 条 Invalid 均为格式违规（输出带额外文字，例如选项字母后附加数值），并非 Token 截断。诊断时发现其中 17 条的选项字母本身与标准答案一致；但正式成绩仍按预先固定的严格格式规则将其计为 Invalid，不采用事后放宽解析的分数。
+
+## 8. 结果分析
+
+### 8.1 Thinking On 与 Off（历史 8192 实验）
+
+- Xiaomi：Thinking On 官方总分比 Off 低约 0.48 pp；平均端到端耗时约为 Off 的 3.93 倍，平均输出 Token 约为 3.04 倍。Relation 略有提升，其他任务略降。
+- Qwen：Thinking On 官方总分比 Off 低约 1.42 pp；平均端到端耗时约为 3.49 倍，平均输出 Token 约为 11.51 倍。172 条样本达到 8,192 Token 上限仍未给出最终答案，主要集中在 Count。
+- 这说明在当前 CV-Bench 选择题和 8,192 Token 上限下，显式 Thinking 没有带来官方总分收益。Qwen On 的有效回答子集准确率较高（报告记录为 91.08%），但该诊断口径排除了大量无效 / 截断样本，不能替代官方成绩。
+
+### 8.2 Direct Answer 的准确率与效率
+
+与各模型历史 Thinking Off / 8192 相比：
+
+| 模型 | 官方分数变化 | 平均生成 Token 变化 | 平均端到端耗时变化 |
 |---|---:|---:|---:|
-| Qwen Off | 86.7590% | 86.7590% | 0.000000 |
-| Qwen On | 85.3367% | 85.3367% | 0.000000 |
-| Xiaomi Off | 87.7626% | 87.7626% | 0.000000 |
-| Xiaomi On | 87.2871% | 87.2871% | 0.000000 |
+| Xiaomi-Lens-0 | 87.76% → 87.04%（−0.72 pp） | 137.24 → 8.00（约 −94.2%） | 4.98 s → 0.299 s（约 −94.0%） |
+| Qwen3.5-4B | 86.76% → 85.88%（−0.88 pp） | 118.56 → 9.98（约 −91.6%） | 10.64 s → 0.334 s（约 −96.9%） |
 
-另核对：评测共用的 `answer_parser.py`、`cvbench_dataset.py`、`metrics.py`、`test_answer_parser.py` 在两个模型目录中 **SHA-1 完全相同**，因此评分协议确实同源。
+这是“整体实验协议变化”的结果：Direct Answer 同时改变了 Prompt、最大生成长度和答案解析方式。因此不能把全部变化单独归因于关闭 Thinking。8192 是上限，不是固定生成长度；实际提速主要伴随输出从上百 Token 缩短到约 8–10 Token。
 
-**结论：四种运行均完整、可复现，无需续跑，未修改任何原始文件。**
+### 8.3 两模型在 Direct Answer 下的差异
 
----
+- Xiaomi 官方总分 87.04%，Qwen 85.88%，相差 1.16 pp；逐题配对检验 p=0.0159。
+- Xiaomi 在 Count（+3.05 pp）、Relation（+0.77 pp）、Depth（+1.33 pp）更高。
+- Qwen 在 Distance 略高（+0.50 pp）。
+- 配对结果：两者都答对 2,182 题、都答错 268 题；仅 Xiaomi 答对 111 题，仅 Qwen 答对 77 题。
+- 主要差距来自 2D Count，尤其是 COCO Count；Direct Answer 下 Xiaomi 的 COCO Count 为 79.37%，Qwen 为 74.89%。
+- Qwen 的 24 条格式违规会影响严格 Accuracy；后续可研究格式提示鲁棒性，但若修改 Prompt 或解析器，必须作为新实验版本重新评测，不能回改本次成绩。
 
-## 7. Qwen3.5-4B：Thinking Off vs On
+## 9. 测试局限与注意事项
 
-### 7.1 总览
-
-| 指标 | Thinking Off | Thinking On | 变化 |
-|---|---:|---:|---:|
-| **官方 CV-Bench 总分** | **86.76%** | **85.34%** | **−1.42 pp** |
-| 全部样本普通 Accuracy | 86.73% | 85.14% | −1.59 pp |
-| 2D Accuracy（官方加权） | 82.27% | 79.09% | −3.18 pp |
-| 3D Accuracy（Omni3D） | 91.25% | 91.58% | +0.33 pp |
-| ADE20K Accuracy | 76.46%（484/633） | 73.46%（465/633） | −3.00 pp |
-| COCO Accuracy | 88.07%（709/805） | 84.72%（682/805） | −3.35 pp |
-| Omni3D Accuracy | 91.25%（1095/1200） | 91.58%（1099/1200） | +0.33 pp |
-| Invalid Rate | 0.04%（1） | **6.52%（172）** | +6.48 pp |
-| 截断率 | 0%（0） | 6.52%（172） | +6.52 pp |
-| 平均生成 Token | 118.56 | 1365.24 | 11.51× |
-| 平均 Thinking Token | 0 | 1301.77 | — |
-| 平均端到端耗时 | 10.64 s | 37.13 s | 3.49× |
-| P95 端到端耗时 | 35.71 s | 214.31 s | 6.00× |
-| Tokens/s（含 Prefill） | 11.22 | 36.79 | +25.57 |
-| 单样本峰值显存（均值/最大） | 8.66 / 9.22 GiB | 8.67 / 9.22 GiB | ≈ 0 |
-| 总墙钟时间 | 28070 s（7.8 h） | 97942 s（27.2 h） | 3.49× |
-
-### 7.2 细分任务
-
-| 任务 | Off | On | 变化 |
-|---|---:|---:|---:|
-| 物体计数 Count | 572/788（72.59%） | 524/788（66.50%） | −6.09 pp |
-| 二维空间关系 Relation | 621/650（95.54%） | 623/650（95.85%） | +0.31 pp |
-| 深度顺序 Depth | 558/600（93.00%） | 559/600（93.17%） | +0.17 pp |
-| 相对距离 Distance | 537/600（89.50%） | 540/600（90.00%） | +0.50 pp |
-
-| 组合 | Off | On | 变化 |
-|---|---:|---:|---:|
-| 2D/Count/ADE20K | 210/342（61.40%） | 188/342（54.97%） | −6.43 pp |
-| 2D/Count/COCO | 362/446（81.17%） | 336/446（75.34%） | −5.83 pp |
-| 2D/Relation/ADE20K | 274/291（94.16%） | 277/291（95.19%） | +1.03 pp |
-| 2D/Relation/COCO | 347/359（96.66%） | 346/359（96.38%） | −0.28 pp |
-| 3D/Depth/Omni3D | 558/600（93.00%） | 559/600（93.17%） | +0.17 pp |
-| 3D/Distance/Omni3D | 537/600（89.50%） | 540/600（90.00%） | +0.50 pp |
-
-**关键事实：Qwen On 的失分几乎全部集中在 2D 计数任务**，3D 与非计数类 2D 任务反而略有提升。
-
-### 7.3 逐样本差异
-
-| 类别 | 数量 |
-|---|---:|
-| 两种模式都对 | 2137 |
-| 两种模式都错 | 241 |
-| Off 对、On 错 | 151 |
-| Off 错、On 对 | 109 |
-| 预测发生变化 | 367 |
-
-净损失 42 题。McNemar 精确检验：**p = 0.011**，即 Qwen 关闭 Thinking 在普通逐题正确率上显著更好。
-
-### 7.4 为什么下降：172 条截断
-
-- 172 条无效样本全部是 `truncated_before_final_answer`：生成到 8192 token 仍未写出 `</think>` 和 `FINAL_ANSWER`。
-- 分布：Count 118、Relation 14、Depth 19、Distance 21；按来源 ADE20K 79、COCO 53、Omni3D 40。
-- 其中 **85 条在 Off 模式下原本答对**。
-- 非截断样本的思考 Token 平均 821，而截断样本直接用满 8192。
-
-**剔除无效答案后的诊断口径**（仅作分析，不是官方成绩）：
-
-| 口径 | Off | On |
-|---|---:|---:|
-| 只统计有效回答的普通 Accuracy | 86.77% | **91.08%** |
-| 只统计有效回答的官方加权分（诊断） | — | 2D 87.31% / 3D 94.74% / 合计 91.03% |
-
-这说明 Qwen 的 Thinking **本身是有效的**，但它在这套题上容易陷入过长推理、无法收敛，最终因格式约束未满足而丢掉 6.5% 的样本。这是**模型行为 + 8192 上限**共同作用的结果，不是解析器误判。
-
----
-
-## 8. Xiaomi-Lens-0 与 Qwen3.5-4B 横向对比
-
-### 8.1 主对比表
-
-| 指标 | Xiaomi Off | Xiaomi On | Qwen Off | Qwen On |
-|---|---:|---:|---:|---:|
-| **官方 CV-Bench 总分** | **87.76%** | **87.29%** | **86.76%** | **85.34%** |
-| 全部样本普通 Accuracy | 87.76% | 87.23% | 86.73% | 85.14% |
-| 2D Accuracy（官方加权） | 83.44% | 83.41% | 82.27% | 79.09% |
-| 3D Accuracy（Omni3D） | 92.08% | 91.17% | 91.25% | 91.58% |
-| 物体计数 Count | 74.49% | 73.86% | 72.59% | 66.50% |
-| 二维空间关系 Relation | 95.85% | 96.15% | 95.54% | 95.85% |
-| 深度顺序 Depth | 94.83% | 94.17% | 93.00% | 93.17% |
-| 相对距离 Distance | 89.33% | 88.17% | 89.50% | 90.00% |
-| ADE20K | 77.57% | 78.99% | 76.46% | 73.46% |
-| COCO | 89.32% | 87.83% | 88.07% | 84.72% |
-| Omni3D | 92.08% | 91.17% | 91.25% | 91.58% |
-| Invalid Rate | 0.34% | 0.99% | 0.04% | 6.52% |
-| 截断数 | 7 | 11 | 0 | 172 |
-| 平均生成 Token | 137.24 | 417.44 | 118.56 | 1365.24 |
-| 平均 Thinking Token | 0 | 302.26 | 0 | 1301.77 |
-| 平均端到端耗时 | 4.98 s | 19.58 s | 10.64 s | 37.13 s |
-| P95 端到端耗时 | 12.42 s | 65.45 s | 35.71 s | 214.31 s |
-| Tokens/s（含 Prefill） | 27.80 | 21.39 | 11.22 | 36.79 |
-| 单样本峰值显存（均值） | 8.81 GiB | 8.81 GiB | 8.66 GiB | 8.67 GiB |
-| 全局峰值显存（最大） | 9.36 GiB | 9.36 GiB | 9.22 GiB | 9.22 GiB |
-| 总墙钟时间 | 3.62 h | 14.35 h | 7.80 h | 27.21 h |
-
-### 8.2 逐题胜负与显著性
-
-| 对比 A vs B | 仅 A 对 | 仅 B 对 | 净差 | 精确 McNemar p |
-|---|---:|---:|---:|---:|
-| Qwen Off vs Qwen On | 151 | 109 | +42（Off 优） | **0.011** |
-| Xiaomi Off vs Xiaomi On | 95 | 81 | +14（Off 优） | 0.327 |
-| Qwen Off vs Xiaomi Off | 100 | 127 | −27（Xiaomi 优） | 0.084 |
-| Qwen On vs Xiaomi On | 108 | 163 | −55（Xiaomi 优） | **0.001** |
-| Qwen Off vs Xiaomi On | 110 | 123 | −13（Xiaomi 优） | 0.432 |
-| Qwen On vs Xiaomi Off | 103 | 172 | −69（Xiaomi 优） | **0.00004** |
-
-说明：McNemar 检验针对**逐题普通正确率**，不是官方加权分；它回答的是“同一道题上谁更可能答对”。
-
-### 8.3 结论性分析
-
-1. **总体**：Xiaomi-Lens-0 的官方总分（87.76% / 87.29%）在两个 Thinking 模式下都高于 Qwen3.5-4B（86.76% / 85.34%）。
-   但 Off 模式下差距仅约 1.0 pp，逐题检验 **不显著（p = 0.084）**；On 模式下差距扩大到约 2.0 pp 且**显著（p = 0.001）**。
-2. **2D**：Xiaomi 略强（83.44% vs 82.27%）。差异主要来自 **Count**（74.49% vs 72.59%），Relation 两者几乎持平（95.85% vs 95.54%）。
-3. **3D**：Xiaomi Off 更强（92.08% vs 91.25%），优势在 **Depth**（94.83% vs 93.00%）；**Distance** 上 Qwen 反而略好（89.50% vs 89.33%）。
-4. **Thinking 的影响不同**：
-   - Xiaomi：几乎无收益也无明显损失（官方 −0.48 pp，逐题检验不显著），思考更像“温和复核”；
-   - Qwen：官方 −1.42 pp 且显著，主要因为 **6.52% 的样本无法在 8192 token 内收敛**；但只看有效回答时准确率最高（91.08%）。
-5. **成本**：
-   - Xiaomi On：平均 417 token、19.6 s，约为 Off 的 3.0× Token、3.9× 时间；
-   - Qwen On：平均 1365 token、37.1 s，约为 Off 的 11.5× Token、3.5× 时间，P95 达到 214 s。
-   - 在当前设置下，**两个模型的 Thinking 都没有带来官方分数提升**，属于“付出成本但未获收益”。
-6. **最值得注意的单一现象**：Qwen 的失败不是“不会做”，而是“想太久不给答案”。172 条截断中有 85 条在原 Off 模式下是答对的。
-
-### 8.4 典型样例
-
-**样例 1：Thinking 误导计数（uid `2D:5`，Count / ADE20K）**
-
-```text
-问题：How many beds are in the image?  选项：2 / 1 / 0 / 3
-Ground Truth：B（1）
-Qwen Off    ：B（1）✅  “a single bed … there is also a white crib”
-Qwen On     ：A（2）❌  “two beds visible: a white crib on the left and a larger bed”
-Xiaomi Off  ：A（2）❌
-Xiaomi On   ：A（2）❌
-```
-
-分析：开启思考后，模型把婴儿床也归类为 bed，属于**过度细化导致的类别边界错误**；Xiaomi 也存在同样偏好。
-
-**样例 2：思考修正计数（uid `2D:15`，Count / ADE20K）**
-
-```text
-问题：How many candle holders are in the image?  选项：1/2/3/0/4
-Ground Truth：B（2）
-Qwen Off    ：C（3）❌
-Qwen On     ：B（2）✅
-Xiaomi Off  ：B（2）✅
-```
-
-分析：Qwen 在思考中逐个定位了侧柜上的两个烛台，修正了关闭思考时的多计，说明 **Thinking 确实能改善细粒度计数**。
-
-**样例 3：Thinking 无法收敛（uid `2D:25`，Count / ADE20K）**
-
-```text
-问题：How many folders are in the image?  选项：0/2/3/1
-Ground Truth：D（1）
-Qwen Off    ：D（1）✅（89 token）
-Qwen On     ：无最终答案（8192 token，truncated_before_final_answer）❌
-```
-
-分析：模型在思考区反复扫描桌面物品，始终没有写出 `</think>`。这是 Qwen On 172 条截断的典型形态。
-
-**样例 4：Thinking 过度计数（uid `2D:23`，Count / ADE20K）**
-
-```text
-问题：How many curtains are in the image?  选项：1/3/2/0/4
-Ground Truth：C（2）
-Qwen Off    ：C（2）✅（61 token）
-Qwen On     ：B（3）❌（3031 token）
-Xiaomi Off  ：C（2）✅
-Xiaomi On   ：C（2）✅（322 token）
-```
-
-分析：思考把“一层纱帘 + 一层布帘 + 窗框遮挡”拆成 3 个对象；Xiaomi 的思考更短，保持了“两个帘片”的正确划分。这体现了两者 Thinking 策略的差异。
-
----
-
-## 9. 局限与不可直接比较之处
-
-1. **推理速度不可横向比较**：Qwen 使用 `sdpa`，Xiaomi 使用 `flash_attention_2`；且 GPU 在本机长期被其他任务共享（Qwen Off 运行时明确标记 `gpu_shared=true`）。表中的耗时只反映“当时那台机器、那个时刻”的表现，不是模型的固有性能。
-2. **Transformers 版本不同**（5.20.2 vs 5.4.0）。数据加载、解析、指标代码相同，但底层推理实现和 chat template 处理可能带来细微差异。
-3. **Thinking 模式并非完全等价**：虽然都用 `enable_thinking` 布尔开关，但两个模型生成思考的习惯差异很大（平均 302 vs 1302 个思考 token），Qwen 会大量截断。这既可能是模型差异，也受 `max_new_tokens=8192` 上限影响。
-4. **Invalid 与截断进入分母**，会压低官方分数，尤其是 Qwen On。报告同时给出了“只统计有效回答”的诊断值，但它**不能替代官方成绩**。
-5. **答案解析严格但机械**：格式稍有偏差（加粗、小写、缺括号）即判无效。该规则对两个模型完全一致，不存在偏袒；但它衡量的是“准确率 + 格式遵守度”的合成结果。
-6. **图像预处理由各自 Processor 完成**，分辨率策略可能不同；虽然输入都是同一张图，但进入模型的视觉 token 不一定相同。
-7. **模型差异的归因**：Qwen3.5-4B 是通用模型，Xiaomi-Lens-0 是空间任务专门化模型，架构与训练数据不同。观察到的差距**不能**单独归因于任一因素。
-8. **CV-Bench 只覆盖四类任务**，不能代表完整的空间理解能力（例如遮挡推理、多步导航、三维重建）。
-9. 本机 GPU 上还运行着无关的 `graphnav` 任务（约 12.9 GB），本次核验**未触碰**任何其他进程。
-
----
+1. **GPU 并非全程独占。** Direct Answer 两模型的实验记录均标记 GPU shared；历史记录也注明存在其他 DRL / graphnav 等 GPU 进程。速度、吞吐和显存全局占用会受并发影响，不能当作独占 GPU 的硬件基准。
+2. **模型推理栈不同。** Xiaomi 使用 Transformers 5.4.0 + flash_attention_2；Qwen 使用 Transformers 5.20.2 + SDPA。Processor、tokenizer、视觉预处理和 Attention 后端不同。
+3. **历史与 Direct Answer 不是严格单变量对照。** Prompt、max_new_tokens（8192 vs 64）和解析规则均不同；结果适合观察整体协议变化，不适合做单因素因果归因。
+4. **严格格式会计入格式遵循能力。** Qwen Direct Answer 的 24 条额外文字被判 Invalid，正式分数不放宽解析；这使本评测同时衡量答案正确性与格式遵循性。
+5. **只覆盖静态图片和四类空间任务。** 本项目没有评测连续视频帧、跨帧时序推理，也不能据此概括模型全部空间理解能力。
+6. **官方模型 benchmark 与本地 CV-Bench 不同。** 官方报告的 RefCOCO、CountBench、VideoMME 等结果只能作为背景参考，不能与本项目 CV-Bench 分数直接横比。
+7. **机器信息不完整。** 当前实验配置未记录 CPU 型号和系统 RAM 容量，报告不补写推测值。
 
 ## 10. 下一步建议
 
-1. **针对 Qwen 截断做专项分析**：统计 172 条截断的思考循环模式；尝试 `max_new_tokens=16384` 或思考超时/强制收尾，仅用于诊断，不修改原始结果。
-2. **统一硬件条件的效率复测**：在 GPU 独占时，用同一批 200–500 条样本分别测两个模型的 TTFT、Decode 速度与峰值显存。
-3. **Prompt 敏感性实验**：同一数据集换 2–3 种格式指令（例如把 `FINAL_ANSWER` 放到最前、使用 JSON 输出），检验格式约束对两个模型的影响是否一致。
-4. **细分任务专项评测**：Count 是唯一明显分化的任务，建议单独扩大样本或增加变体（小物体、遮挡、同类多实例）。
-5. **扩展三维空间评测**：增加 SPAR-Bench、VSI-Bench 等，检验 Depth/Distance 上的结论是否可迁移。
-6. **Comparison 的统计口径**：后续报告建议固定同时给出“官方加权分 + 配对 McNemar 检验”，避免把 1 pp 左右的差异直接解读为能力差距。
+1. **独占 GPU 复测速度：** 固定相同样本、Batch Size、精度和计时口径，分别测两个模型的 TTFT、Decode 吞吐、端到端延迟与峰值显存。
+2. **改善 Qwen Direct Answer 格式遵循：** 研究如何减少“选项字母 + 数值”等额外输出；新 Prompt 应使用新版本号并重新跑完整或预先定义的验证集。
+3. **做错误案例分析：** 优先分析 Count / COCO Count 和 Distance，区分视觉漏检、类别边界、空间关系判断与格式错误。
+4. **研究任务自适应思考：** 目前数据提示 Count / Distance 可能更依赖分析过程，而 Depth 直接回答表现较好；需要在固定 Prompt 与生成预算下做专门控制实验，才能验证这一假设。
+5. **扩展数据集：** 后续可加入 SPAR-Bench、VSI-Bench；如果研究视频导航，再单独设计连续帧或视频输入实验。
 
----
+## 11. 原始结果、脚本与复现入口
 
-## 11. 最终结论
+本报告汇总数据来自以下仓库文件；这些原始记录应保留，不要直接覆盖。
 
-1. **Xiaomi-Lens-0 总体表现更好**：Off 87.76%（Qwen 86.76%），On 87.29%（Qwen 85.34%）。但 Off 的差距在逐题检验下不显著（p = 0.084），On 的差距显著（p = 0.001）。
-2. **差异最明显的任务**：2D 物体计数（Xiaomi 74.49% vs Qwen 72.59%）与 3D 深度顺序（94.83% vs 93.00%）；相对距离上 Qwen 略优（89.50% vs 89.33%）。
-3. **Thinking 没有带来官方分数收益**：Xiaomi −0.48 pp（不显著），Qwen −1.42 pp（显著），且 Qwen 出现 6.52% 的截断。
-4. **但 Qwen 的 Thinking 本身是有效的**：只统计有效回答时其准确率达 91.08%，为四种运行中最高；问题是稳定性与收敛性。
-5. **性能成本**：Qwen On 的平均 Token 为 Off 的 11.5×、平均耗时 3.5×、P95 6.0×；Xiaomi On 为 3.0× Token、3.9× 耗时。在相同的 8192 token 预算下，Xiaomi 的思考更“经济”。
-6. **最重要的发现**：在这套评测里，**“能否稳定输出可解析的最终答案”比“是否开启思考”更能决定最终成绩**。Qwen 的 6.52% 截断比其他所有准确率差异都更值得关注。
+| 内容 | 路径 |
+|---|---|
+| Xiaomi 历史评测说明 | [Xiaomi 评测 README](../Xiaomi-Lens-0/eval_xiaomi_cvbench/README.md) |
+| Qwen 历史评测说明 | [Qwen 评测 README](../eval_qwen35_cvbench/README.md) |
+| Direct Answer 统一协议 | [Direct Answer README](../eval_cvbench_direct_answer/README.md) |
+| Direct Answer Prompt | [direct_answer_v1.txt](../eval_cvbench_direct_answer/prompts/direct_answer_v1.txt) |
+| Xiaomi Direct Answer 指标 | [metrics.json](../eval_cvbench_direct_answer/results/direct_answer_think_off_max_new_tokens_64_v1/xiaomi_lens/metrics.json) |
+| Qwen Direct Answer 指标 | [metrics.json](../eval_cvbench_direct_answer/results/direct_answer_think_off_max_new_tokens_64_v1/qwen35_4b/metrics.json) |
+| Xiaomi Direct Answer 逐样本预测 | [predictions.jsonl](../eval_cvbench_direct_answer/results/direct_answer_think_off_max_new_tokens_64_v1/xiaomi_lens/predictions.jsonl) |
+| Qwen Direct Answer 逐样本预测 | [predictions.jsonl](../eval_cvbench_direct_answer/results/direct_answer_think_off_max_new_tokens_64_v1/qwen35_4b/predictions.jsonl) |
+| Direct Answer 原始对比报告 | [cvbench_direct_answer_comparison.md](../eval_cvbench_direct_answer/reports/cvbench_direct_answer_comparison.md) |
+| 历史 Thinking Off / On 对比报告 | [历史对比报告](../Xiaomi-Lens-0/eval_xiaomi_cvbench/results/comparison_report.md) |
 
----
-
-## 附录 A：本次新增文件
-
-```text
-reports/
-├── CV-Bench_Qwen35_Xiaomi_Comparison.md   # 本报告
-└── analysis/
-    ├── verify_results.py                  # 独立只读核验脚本
-    └── verification.json                  # 核验与复算的完整数值结果
-```
-
-**未修改**任何原有脚本、预测文件、指标文件、模型权重、数据集或环境配置。
-
-## 附录 B：复现命令
-
-```bash
-cd /home/20261024_1/Workspace/qyh/VLM-test
-
-# 独立核验（只读，不写入原始结果目录）
-micromamba run -n vlm-test python -B reports/analysis/verify_results.py
-```
-
-脚本会重新读取四份 `predictions.jsonl`，从 `raw_generation` 重新解析并复算，输出：
-
-- 覆盖/重复/缺失检查；
-- 解析一致性检查；
-- 官方加权分复算与差值；
-- 四种运行的汇总表、逐题胜负矩阵与 McNemar 输入。
+**复现原则：** 本报告生成时只读取现有实验记录并整理内容，没有修改模型代码、评测脚本、预测文件、数据集或 Micromamba 环境，也没有重新下载模型或数据集。
