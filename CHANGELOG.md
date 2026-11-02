@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.4.0] - 2026-11-01
+
+### Features
+- 项目结构调整为 `models/`、`datasets/`、`evaluation/`、`experiments/`、
+  `reports/`、`analysis/`、`notebooks/`、`docs/`。
+- 评测代码统一到 `evaluation/`：`common/` 保存两个模型共用的
+  `cvbench_dataset.py`、`answer_parser.py`、`metrics.py`、`test_answer_parser.py`；
+  `qwen35_4b/`、`xiaomi_lens/`、`direct_answer/` 保存各自的适配器与入口。
+- 六组 CV-Bench 结果统一归档到
+  `experiments/cv_bench/{legacy_8192,direct_answer_64_v1}/<model>/`。
+- 小样本试跑归档到 `experiments/cv_bench/smoke/`。
+- 正式报告集中到 `reports/legacy_8192/`、`reports/direct_answer_64_v1/`；
+  独立核验脚本与派生数据移到 `analysis/`。
+- Historical Notebook 集中到 `notebooks/` 并重命名，源码单元格中的旧绝对路径已更新。
+
+### Design Rationale
+- **删除 4 个逐字节重复的通用模块**，改为单一实现 + 显式导入，
+  避免两个模型各自维护副本后分叉。
+- **保留 `dataset -> datasets` 兼容符号链接**：历史 `experiment.json` 的
+  数据集指纹使用 `dataset/CV-Bench` 字符串，改字符串会破坏 `--resume`。
+- **不移动模型权重**：权重仍在 Hugging Face 本地缓存，`models/` 只放源码。
+- **不修改历史实验输出内容**：只移动目录；`experiment.json` 中记录的
+  运行时路径保持原样。
+
+### Notes & Caveats
+- 六组结果在重构后均通过 `--validate`：2638/2638、官方分与 `metrics.json` 一致。
+- Direct Answer 历史结果的 `experiment.json` 记录了重构前的代码目录，
+  若执行 `--resume` 会触发指纹不一致；这些运行已完成，核验请用 `--validate`。
+- 删除了 `__pycache__` / `*.pyc` 等生成文件；未删除任何实验结果、日志或报告。
+
 ## [0.3.0] - 2026-11-01
 
 ### Features

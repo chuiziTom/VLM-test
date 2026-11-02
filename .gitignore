@@ -1,4 +1,10 @@
-/dataset/CV-Bench/test_2d.jsonl
-/dataset/CV-Bench/test_2d.parquet
-/dataset/CV-Bench/test_3d.jsonl
-/dataset/CV-Bench/test_3d.parquet
+# 大型数据集文件（通过 datasets/download_cv_bench.py 重新生成）
+/datasets/CV-Bench/test_2d.jsonl
+/datasets/CV-Bench/test_2d.parquet
+/datasets/CV-Bench/test_3d.jsonl
+/datasets/CV-Bench/test_3d.parquet
+# 兼容符号链接（dataset -> datasets）
+/dataset
+/experiments/cv_bench/logs/qwen35_direct_answer_v1.log
+/experiments/cv_bench/logs/xiaomi_direct_answer_v1.log
+/experiments/cv_bench/smoke/

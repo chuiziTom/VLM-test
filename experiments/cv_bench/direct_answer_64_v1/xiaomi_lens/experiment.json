@@ -1,0 +1,84 @@
+{
+  "config": {
+    "experiment_name": "direct_answer_think_off_max_new_tokens_64_v1",
+    "protocol": "direct_answer",
+    "prompt_version": "v1",
+    "parser_version": "direct-1.0",
+    "model_key": "xiaomi_lens",
+    "model_name": "Xiaomi-Lens-0",
+    "model_path": "SeerRay-Lab/Xiaomi-Lens-0",
+    "thinking_mode": "off",
+    "enable_thinking": false,
+    "max_new_tokens": 64,
+    "do_sample": false,
+    "split": "all",
+    "limit": null,
+    "stratified": false,
+    "seed": 0,
+    "dataset_dir": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench",
+    "dataset_files": {
+      "test_2d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_2d.parquet",
+        "size": 184906137,
+        "mtime_ns": 1793184656243391200
+      },
+      "test_3d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_3d.parquet",
+        "size": 219902227,
+        "mtime_ns": 1793184270081739778
+      }
+    },
+    "prompt_file": "/home/20261024_1/Workspace/qyh/VLM-test/eval_cvbench_direct_answer/prompts/direct_answer_v1.txt",
+    "prompt_sha1": "89db68802fb5edef5d4a97aafa041e003da75f4c",
+    "instruction_suffix": "\n\nAnswer the multiple-choice question directly.\n\nDo not provide explanations, reasoning, or analysis.\nOutput exactly one line in the following format:\n\nFINAL_ANSWER: (X)\n\nwhere X is one of the provided option letters.\n\nDo not output anything else.",
+    "instruction_suffix_sha1": "3405f00036da52b4c0db835067a193d88d85ad1e",
+    "selected_uids_sha1": "2a8a5c968bbe2067f31fb44231580f4c50740604",
+    "selected_samples": 2638,
+    "eval_code_dir": "/home/20261024_1/Workspace/qyh/VLM-test/Xiaomi-Lens-0/eval_xiaomi_cvbench",
+    "attn_requested": "flash_attention_2",
+    "torch": "2.10.0+cu128",
+    "transformers": "5.4.0",
+    "python": "3.11.18",
+    "fingerprint": "2979d197f16e2d851cb8766b861c858c06354608",
+    "model_resolved_path": "/home/20261024_1/.cache/huggingface/hub/models--SeerRay-Lab--Xiaomi-Lens-0/snapshots/68f57cdde1a19f751e78b18af04efa8ca8bd7fce",
+    "model_snapshot": "68f57cdde1a19f751e78b18af04efa8ca8bd7fce",
+    "model_load_seconds": 4.992446331074461,
+    "vram_after_load": {
+      "allocated_gib": 8.609443187713623,
+      "reserved_gib": 8.625,
+      "peak_allocated_gib": 8.609453201293945,
+      "peak_reserved_gib": 8.625,
+      "gpu_used_gib": 23.23583984375,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "warmup_seconds": 1.39095196290873,
+    "global_peak_allocated_gib": 9.358337879180908,
+    "global_peak_reserved_gib": 9.453125,
+    "gpu_used_gib_end": 24.08544921875,
+    "gpu_free_gib_end": 70.8746337890625,
+    "total_wall_seconds": 789.6777943309862,
+    "completed_samples": 2638,
+    "expected_samples": 2638,
+    "status": "completed",
+    "attn_implementation": "flash_attention_2",
+    "cpu_offload": null,
+    "hf_device_map": null,
+    "python_executable": "/home/20261024_1/.local/share/mamba/envs/xiaomi-lens/bin/python",
+    "conda_env": "xiaomi-lens",
+    "cuda_version": "12.8",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "gpu_shared": true,
+    "gpu_processes_at_end": [
+      {
+        "pid": "269634",
+        "process_name": "/home/20261024_1/miniconda3/envs/graphnav/bin/python",
+        "used_memory": "14144 MiB"
+      },
+      {
+        "pid": "404614",
+        "process_name": "python",
+        "used_memory": "10342 MiB"
+      }
+    ]
+  }
+}

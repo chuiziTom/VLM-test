@@ -1,0 +1,84 @@
+{
+  "config": {
+    "experiment_name": "direct_answer_think_off_max_new_tokens_64_v1",
+    "protocol": "direct_answer",
+    "prompt_version": "v1",
+    "parser_version": "direct-1.0",
+    "model_key": "qwen35_4b",
+    "model_name": "Qwen3.5-4B",
+    "model_path": "Qwen/Qwen3.5-4B",
+    "thinking_mode": "off",
+    "enable_thinking": false,
+    "max_new_tokens": 64,
+    "do_sample": false,
+    "split": "all",
+    "limit": null,
+    "stratified": false,
+    "seed": 0,
+    "dataset_dir": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench",
+    "dataset_files": {
+      "test_2d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_2d.parquet",
+        "size": 184906137,
+        "mtime_ns": 1793184656243391200
+      },
+      "test_3d.parquet": {
+        "path": "/home/20261024_1/Workspace/qyh/VLM-test/dataset/CV-Bench/test_3d.parquet",
+        "size": 219902227,
+        "mtime_ns": 1793184270081739778
+      }
+    },
+    "prompt_file": "/home/20261024_1/Workspace/qyh/VLM-test/eval_cvbench_direct_answer/prompts/direct_answer_v1.txt",
+    "prompt_sha1": "89db68802fb5edef5d4a97aafa041e003da75f4c",
+    "instruction_suffix": "\n\nAnswer the multiple-choice question directly.\n\nDo not provide explanations, reasoning, or analysis.\nOutput exactly one line in the following format:\n\nFINAL_ANSWER: (X)\n\nwhere X is one of the provided option letters.\n\nDo not output anything else.",
+    "instruction_suffix_sha1": "3405f00036da52b4c0db835067a193d88d85ad1e",
+    "selected_uids_sha1": "2a8a5c968bbe2067f31fb44231580f4c50740604",
+    "selected_samples": 2638,
+    "eval_code_dir": "/home/20261024_1/Workspace/qyh/VLM-test/eval_qwen35_cvbench",
+    "attn_requested": "sdpa",
+    "torch": "2.10.0+cu128",
+    "transformers": "5.20.2",
+    "python": "3.11.18",
+    "fingerprint": "d1d361620aed73029a724aeb1b6e94008d78ce14",
+    "model_resolved_path": "/home/20261024_1/.cache/huggingface/hub/models--Qwen--Qwen3.5-4B/snapshots/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "model_snapshot": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "model_load_seconds": 3.624937324086204,
+    "vram_after_load": {
+      "allocated_gib": 8.455068588256836,
+      "reserved_gib": 8.466796875,
+      "peak_allocated_gib": 8.455069065093994,
+      "peak_reserved_gib": 8.466796875,
+      "gpu_used_gib": 23.07763671875,
+      "gpu_total_gib": 94.9600830078125
+    },
+    "warmup_seconds": 1.232798560988158,
+    "global_peak_allocated_gib": 9.221079349517822,
+    "global_peak_reserved_gib": 9.296875,
+    "gpu_used_gib_end": 23.93115234375,
+    "gpu_free_gib_end": 71.0289306640625,
+    "total_wall_seconds": 882.145403215196,
+    "completed_samples": 2638,
+    "expected_samples": 2638,
+    "status": "completed",
+    "attn_implementation": "sdpa",
+    "cpu_offload": null,
+    "hf_device_map": {},
+    "python_executable": "/home/20261024_1/.local/share/mamba/envs/vlm-test/bin/python",
+    "conda_env": "vlm-test",
+    "cuda_version": "12.8",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "gpu_shared": true,
+    "gpu_processes_at_end": [
+      {
+        "pid": "269634",
+        "process_name": "/home/20261024_1/miniconda3/envs/graphnav/bin/python",
+        "used_memory": "14146 MiB"
+      },
+      {
+        "pid": "413821",
+        "process_name": "python",
+        "used_memory": "10182 MiB"
+      }
+    ]
+  }
+}

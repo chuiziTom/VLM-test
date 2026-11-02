@@ -1,61 +1,0 @@
-
-[xiaomi_lens] 已完成 0，待评测 2638 -> /home/20261024_1/Workspace/qyh/VLM-test/eval_cvbench_direct_answer/results/direct_answer_think_off_max_new_tokens_64_v1/xiaomi_lens
-[xiaomi_lens] GPU: NVIDIA RTX PRO 6000 Blackwell Workstation Edition  总显存 95.0 GiB  空闲 80.4 GiB  计算进程数 2
-Loading weights:   0%|          | 0/749 [00:00<?, ?it/s]Loading weights:   4%|▎         | 27/749 [00:00<00:12, 59.84it/s]Loading weights:   7%|▋         | 52/749 [00:00<00:06, 102.86it/s]Loading weights:   9%|▉         | 68/749 [00:00<00:05, 114.91it/s]Loading weights:  12%|█▏        | 90/749 [00:00<00:04, 139.86it/s]Loading weights:  15%|█▌        | 114/749 [00:00<00:03, 161.20it/s]Loading weights:  18%|█▊        | 133/749 [00:01<00:03, 159.44it/s]Loading weights:  21%|██        | 157/749 [00:01<00:03, 179.62it/s]Loading weights:  24%|██▎       | 177/749 [00:01<00:03, 172.17it/s]Loading weights:  26%|██▋       | 198/749 [00:01<00:03, 179.13it/s]Loading weights:  30%|██▉       | 222/749 [00:01<00:02, 193.20it/s]Loading weights:  32%|███▏      | 243/749 [00:01<00:02, 185.57it/s]Loading weights:  35%|███▌      | 264/749 [00:01<00:02, 186.91it/s]Loading weights:  38%|███▊      | 284/749 [00:01<00:02, 177.13it/s]Loading weights:  41%|████      | 305/749 [00:01<00:02, 182.59it/s]Loading weights:  44%|████▍     | 331/749 [00:02<00:02, 197.54it/s]Loading weights:  47%|████▋     | 351/749 [00:02<00:02, 190.49it/s]Loading weights:  50%|████▉     | 371/749 [00:02<00:01, 190.16it/s]Loading weights:  52%|█████▏    | 391/749 [00:02<00:02, 178.80it/s]Loading weights:  56%|█████▌    | 416/749 [00:02<00:01, 194.83it/s]Loading weights:  58%|█████▊    | 438/749 [00:02<00:01, 195.41it/s]Loading weights:  64%|██████▍   | 482/749 [00:02<00:01, 261.44it/s]Loading weights:  84%|████████▎ | 626/749 [00:02<00:00, 591.35it/s]Loading weights: 100%|██████████| 749/749 [00:02<00:00, 258.16it/s]
-[xiaomi_lens] 模型加载 4.99s  attn=flash_attention_2  allocated=8.61 GiB
-[xiaomi_lens] 50/2638  本次已评测正确率=37/50
-[xiaomi_lens] 100/2638  本次已评测正确率=63/100
-[xiaomi_lens] 150/2638  本次已评测正确率=92/150
-[xiaomi_lens] 200/2638  本次已评测正确率=126/200
-[xiaomi_lens] 250/2638  本次已评测正确率=155/250
-[xiaomi_lens] 300/2638  本次已评测正确率=185/300
-[xiaomi_lens] 350/2638  本次已评测正确率=225/350
-[xiaomi_lens] 400/2638  本次已评测正确率=271/400
-[xiaomi_lens] 450/2638  本次已评测正确率=319/450
-[xiaomi_lens] 500/2638  本次已评测正确率=363/500
-[xiaomi_lens] 550/2638  本次已评测正确率=410/550
-[xiaomi_lens] 600/2638  本次已评测正确率=457/600
-[xiaomi_lens] 650/2638  本次已评测正确率=501/650
-[xiaomi_lens] 700/2638  本次已评测正确率=533/700
-[xiaomi_lens] 750/2638  本次已评测正确率=576/750
-[xiaomi_lens] 800/2638  本次已评测正确率=613/800
-[xiaomi_lens] 850/2638  本次已评测正确率=651/850
-[xiaomi_lens] 900/2638  本次已评测正确率=690/900
-[xiaomi_lens] 950/2638  本次已评测正确率=737/950
-[xiaomi_lens] 1000/2638  本次已评测正确率=780/1000
-[xiaomi_lens] 1050/2638  本次已评测正确率=823/1050
-[xiaomi_lens] 1100/2638  本次已评测正确率=863/1100
-[xiaomi_lens] 1150/2638  本次已评测正确率=910/1150
-[xiaomi_lens] 1200/2638  本次已评测正确率=957/1200
-[xiaomi_lens] 1250/2638  本次已评测正确率=1006/1250
-[xiaomi_lens] 1300/2638  本次已评测正确率=1054/1300
-[xiaomi_lens] 1350/2638  本次已评测正确率=1102/1350
-[xiaomi_lens] 1400/2638  本次已评测正确率=1152/1400
-[xiaomi_lens] 1450/2638  本次已评测正确率=1202/1450
-[xiaomi_lens] 1500/2638  本次已评测正确率=1249/1500
-[xiaomi_lens] 1550/2638  本次已评测正确率=1294/1550
-[xiaomi_lens] 1600/2638  本次已评测正确率=1343/1600
-[xiaomi_lens] 1650/2638  本次已评测正确率=1393/1650
-[xiaomi_lens] 1700/2638  本次已评测正确率=1443/1700
-[xiaomi_lens] 1750/2638  本次已评测正确率=1493/1750
-[xiaomi_lens] 1800/2638  本次已评测正确率=1542/1800
-[xiaomi_lens] 1850/2638  本次已评测正确率=1589/1850
-[xiaomi_lens] 1900/2638  本次已评测正确率=1637/1900
-[xiaomi_lens] 1950/2638  本次已评测正确率=1686/1950
-[xiaomi_lens] 2000/2638  本次已评测正确率=1733/2000
-[xiaomi_lens] 2050/2638  本次已评测正确率=1777/2050
-[xiaomi_lens] 2100/2638  本次已评测正确率=1821/2100
-[xiaomi_lens] 2150/2638  本次已评测正确率=1864/2150
-[xiaomi_lens] 2200/2638  本次已评测正确率=1913/2200
-[xiaomi_lens] 2250/2638  本次已评测正确率=1960/2250
-[xiaomi_lens] 2300/2638  本次已评测正确率=2009/2300
-[xiaomi_lens] 2350/2638  本次已评测正确率=2057/2350
-[xiaomi_lens] 2400/2638  本次已评测正确率=2107/2400
-[xiaomi_lens] 2450/2638  本次已评测正确率=2154/2450
-[xiaomi_lens] 2500/2638  本次已评测正确率=2191/2500
-[xiaomi_lens] 2550/2638  本次已评测正确率=2230/2550
-[xiaomi_lens] 2600/2638  本次已评测正确率=2267/2600
-
-[xiaomi_lens] 官方 CV-Bench = 87.0413%
-[xiaomi_lens] 2D = 82.17%  3D = 91.92%  invalid = 0.00%  format_violation = 0.00%
-[xiaomi_lens] 平均生成 Token = 8.00  平均 e2e = 0.299s
