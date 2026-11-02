@@ -32,7 +32,7 @@
 
 ![Xiaomi-Lens-0 官方六类视觉能力演示](https://raw.githubusercontent.com/chuiziTom/VLM-test/52a39ebe26a0af31e8a5e0dd039cb360bc1592aa/models/Xiaomi-Lens-0/docs/assets/samples/showcase_all_domains.gif)
 
-![Qwen3.5 官方模型宣传图](https://qianwen-res.oss-accelerate.aliyuncs.com/logo_qwen3.5.png)
+**Qwen3.5 官方视觉演示及宣传资料：** [Qwen3.5 官方博客](https://qwen.ai/blog?id=qwen3.5) · [Qwen3.5-4B 官方模型卡](https://huggingface.co/Qwen/Qwen3.5-4B)
 
 ## 3. 本地测试机器与部署
 
