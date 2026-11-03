@@ -38,11 +38,11 @@ Xiaomi 权重实际从本地缓存加载，Notebook 记录的快照路径为：
 
 ### Thinking 与生成参数核对
 
-- **Qwen**：本 Notebook 已执行的推理单元格均传入 <code>enable_thinking=False</code>。其中一个 Markdown 标题写着“中文 + 思考模式”，但该单元格代码实际仍是 <code>enable_thinking=False</code>，且 <code>do_sample=True</code>。因此它不是有效的 Thinking On 实验，不能把它的结果记作 Qwen Thinking On。
+- **Qwen**：更新后的 Notebook 已将几何测试 5 的中文思考实验设置为 <code>enable_thinking=True</code>、<code>do_sample=False</code>，这是有效的 Thinking On 测试；其余 Qwen 推理单元格均为 <code>enable_thinking=False</code>。Qwen Thinking On 目前只在测试 5 上执行，测试 1 没有对应的 Thinking On 结果。
 - **Xiaomi**：通过 Adapter 的 <code>mode="off"</code> / <code>mode="on"</code> 控制 Thinking，并检查 <code>mode_verified=True</code>。本次确实执行了几何测试 5 的 Thinking On。
 - **最大生成长度**：本次 Notebook 中 Qwen 的生成调用使用 <code>max_new_tokens=2048</code>；Xiaomi 的 <code>test_xiaomi()</code> 默认也是 <code>max_new_tokens=2048</code>。
 - **Direct Answer 的含义**：本次所谓“直接回答”是 Prompt 里增加“直接输出答案，不要输出分析过程”的文字指令，**不是** <code>max_new_tokens=64</code>。本次没有执行 64-token 上限实验。
-- Qwen 除一条特别注明的采样测试外使用 <code>do_sample=False</code>；Xiaomi Adapter 使用贪心生成。Qwen 的 <code>temperature/top_p/top_k</code> 在 <code>do_sample=False</code> 时不构成实际采样控制。
+- Qwen 本次各推理单元格均使用 <code>do_sample=False</code>；Xiaomi Adapter 使用贪心生成。Qwen 的 <code>temperature/top_p/top_k</code> 在 <code>do_sample=False</code> 时不构成实际采样控制。
 
 ## 3. 几何测试 1：规则二维网格
 
@@ -50,8 +50,8 @@ Xiaomi 权重实际从本地缓存加载，Notebook 记录的快照路径为：
 
 | 模型 | 提示语言 / 协议 | 实际调用与关键参数 | 模型回答摘要 | 判断 | 生成 Token | 生成耗时 | Token/s | Peak allocated VRAM |
 |---|---|---|---|---|---:|---:|---:|---:|
-| Qwen3.5-4B | 中文 / Off | <code>enable_thinking=False</code>；<code>generate(max_new_tokens=2048, do_sample=False)</code> | “第 2 行、第 2 列……《Music》”；白色/米白色。 | 正确 | 76 | 2.119 s | 35.86 | 未记录 |
-| Qwen3.5-4B | 中文 / Off + 直接回答指令 | 同上；Prompt 末尾增加“请直接输出答案，而不要输出你的分析过程” | “白色；书名 Music；第 2 行、第 2 列”。 | 正确 | 40 | 1.163 s | 34.40 | 未记录 |
+| Qwen3.5-4B | 中文 / Off | <code>enable_thinking=False</code>；<code>generate(max_new_tokens=2048, do_sample=False)</code> | “第 2 行、第 2 列……《Music》”；白色/米白色。 | 正确 | 76 | 2.140 s | 35.51 | 未记录 |
+| Qwen3.5-4B | 中文 / Off + 直接回答指令 | 同上；Prompt 末尾增加“请直接输出答案，而不要输出你的分析过程” | “白色；书名 Music；第 2 行、第 2 列”。 | 正确 | 40 | 1.193 s | 33.54 | 未记录 |
 | Xiaomi-Lens-0 | 中文 / Off | <code>test_xiaomi(image, question, mode="off")</code>；默认 <code>max_new_tokens=2048</code> | “第 2 行、第 2 列的书是《Music》”；白色/米白色。 | 正确 | 82 | 2.267 s | 36.18 | 17.79 GiB |
 | Xiaomi-Lens-0 | 中文 / Off + 直接回答指令 | <code>test_xiaomi(image, question, mode="off")</code>；Prompt 增加直接回答要求 | “白色；Music；第 2 行、第 2 列”。 | 正确 | 39 | 1.134 s | 34.38 | 17.80 GiB |
 
@@ -63,10 +63,10 @@ Xiaomi 权重实际从本地缓存加载，Notebook 记录的快照路径为：
 
 | 模型 | 提示语言 / 实际模式 | 实际调用与关键参数 | 模型回答摘要 | 判断 | 生成 Token | 生成耗时 | Token/s | Peak allocated VRAM |
 |---|---|---|---|---|---:|---:|---:|---:|
-| Qwen3.5-4B | 中文 / Off | <code>enable_thinking=False</code>；<code>generate(max_new_tokens=2048, do_sample=False)</code> | 回答《苏东坡新传（下）》、白色；但把位置说成“中间行”，图片实际只有一排。 | 目标书与颜色正确；行描述错误 | 76 | 3.685 s | 20.62 | 未记录 |
-| Qwen3.5-4B | 中文 / **实际 Off + Sampling** | Notebook Markdown 标注“思考模式”，但代码是 <code>enable_thinking=False</code>、<code>do_sample=True</code>、<code>temperature=1.0</code>、<code>top_p=0.95</code>、<code>top_k=20</code> | 列举时将第 14 本识别为《苏东坡新传（下）》；最终答案只写“苏东坡新传”，位置描述为“最右边一排的第 2 本”。 | 部分正确；不是 Thinking On，最终位置描述不正确 | 415 | 12.902 s | 32.16 | 未记录 |
-| Qwen3.5-4B | 英文 / Off | <code>enable_thinking=False</code>；<code>generate(max_new_tokens=2048, do_sample=False)</code> | 识别白色书脊和第 14 本，但将书名版本说成《苏东坡新传（上）》。 | 书籍版本识别错误 | 178 | 5.962 s | 29.86 | 未记录 |
-| Qwen3.5-4B | 英文 / Off + 直接回答指令 | 同上；Prompt 增加直接回答要求 | 回答《苏东坡新传（上）》，并称位于“第二行、第 7 列”。 | 目标书名和位置均错误 | 47 | 2.529 s | 18.58 | 未记录 |
+| Qwen3.5-4B | 中文 / Off | <code>enable_thinking=False</code>；<code>generate(max_new_tokens=2048, do_sample=False)</code> | 回答《苏东坡新传（下）》、白色；但把位置说成“中间行”，图片实际只有一排。 | 目标书与颜色正确；行描述错误 | 76 | 4.188 s | 18.15 | 未记录 |
+| Qwen3.5-4B | 中文 / **Thinking On** | <code>enable_thinking=True</code>；<code>generate(max_new_tokens=2048, do_sample=False)</code> | 经过较长推理后，最终回答《苏东坡新传（下）》；白色为主、底部有棕色装饰；位置为唯一一排从左数第 14 本。 | 正确 | 1,267（含思考与最终回答） | 36.311 s | 34.89 | 未记录 |
+| Qwen3.5-4B | 英文 / Off | <code>enable_thinking=False</code>；<code>generate(max_new_tokens=2048, do_sample=False)</code> | 识别白色书脊和第 14 本，但将书名版本说成《苏东坡新传（上）》。 | 书籍版本识别错误 | 178 | 6.975 s | 25.52 | 未记录 |
+| Qwen3.5-4B | 英文 / Off + 直接回答指令 | 同上；Prompt 增加直接回答要求 | 回答《苏东坡新传（上）》，并称位于“第二行、第 7 列”。 | 目标书名和位置均错误 | 47 | 3.435 s | 13.68 | 未记录 |
 | Xiaomi-Lens-0 | 中文 / Off | <code>test_xiaomi(image, question, mode="off")</code>；默认 <code>max_new_tokens=2048</code> | 将第 14 本回答为蓝色《新英汉小词典》。它实际是第 15 本；输出的枚举还漏掉了一本数学书。 | 计数错误，目标定位错误 | 280 | 8.164 s | 34.30 | 19.02 GiB |
 | Xiaomi-Lens-0 | 中文 / On | <code>test_xiaomi(image, question, mode="on")</code>；<code>mode_verified=True</code>；默认 <code>max_new_tokens=2048</code> | 最终回答为白色书脊《苏东坡新传》，位置为第一排第 14 本；没有在最终答案中明确区分“上/下”。 | 位置与颜色正确；书名版本信息不完整 | 505（Thinking 458 / Answer 46） | 14.237 s | 35.47 | 19.02 GiB |
 | Xiaomi-Lens-0 | 英文 / Off | <code>test_xiaomi(image, question, mode="off")</code>；默认 <code>max_new_tokens=2048</code> | 回答白色书脊《苏东坡新传（下）》，位于唯一一排、从左数第 14 本。 | 正确 | 508 | 14.391 s | 35.30 | 19.03 GiB |
@@ -75,7 +75,7 @@ Xiaomi 权重实际从本地缓存加载，Notebook 记录的快照路径为：
 **观察：**
 
 1. 测试 5 比测试 1 困难得多。模型需要连续数出多个相邻书籍，并区分《苏东坡新传（上）》和《苏东坡新传（下）》。
-2. Qwen 中文 Off 找到了正确书籍，但位置描述中的“中间行”不符合图片结构；英文 Off 则把上下册混淆。直接回答指令没有修复该错误。
+2. Qwen 中文 Off 找到了正确书籍，但位置描述中的“中间行”不符合图片结构；英文 Off 则把上下册混淆。中文 Thinking On 找到了正确的下册，并正确描述为唯一一排第 14 本；英文直接回答指令仍未修复上下册和位置判断错误。
 3. Xiaomi 中文 Off 漏数了一本数学书，导致把第 15 本蓝色词典当成第 14 本；英文 Off 则正确找到《苏东坡新传（下）》。
 4. 两个模型在测试 5 上都出现了对 Prompt 语言或输出约束敏感的现象。尤其是直接回答指令并不保证结果更准确：Xiaomi 英文直接回答和 Qwen 英文直接回答均出现了明显定位错误。
 5. Xiaomi Thinking On 的最终答案没有区分上下册；虽然位置与颜色正确，但不能将其记为完全正确的书名识别。
@@ -94,7 +94,7 @@ Xiaomi 权重实际从本地缓存加载，Notebook 记录的快照路径为：
 
 - **规则网格定位（测试 1）**：Qwen3.5-4B 和 Xiaomi-Lens-0 均能正确识别第 2 行、第 2 列的白色《Music》。
 - **长序列计数（测试 5）**：两模型都表现出不稳定性。Qwen 在上下册区分和位置描述上出现错误；Xiaomi 中文 Off 出现漏数，英文 Off 能正确回答，而直接回答指令下反而定位失败。
-- **Thinking 的影响**：Xiaomi 有一次经过 Adapter 验证的 Thinking On 测试；Qwen 当前 Notebook 没有真正执行 <code>enable_thinking=True</code>，因此不能据此比较两模型的 Thinking On/Off。Qwen 那条被标注为“思考模式”的记录实际是 Off + Sampling。
+- **Thinking 的影响**：Xiaomi 在测试 5 上有一次经过 Adapter 验证的 Thinking On 测试；更新后的 Qwen Notebook 也在测试 5 上真正执行了 <code>enable_thinking=True</code>、<code>do_sample=False</code>。Qwen 中文 Off 用时 4.188 s、生成 76 Token，位置描述错误；Thinking On 用时 36.311 s、生成 1,267 Token，正确识别下册并给出唯一一排第 14 本的位置。该单样本结果显示 Thinking On 改善了这次定位回答，但耗时和生成长度显著增加，不能据此推断整体规律。Qwen 在测试 1 上尚无 Thinking On 对照。
 - **Direct Answer 的影响**：本次只测试了 Prompt 直接回答指令，没有测试 64-token 上限。直接回答并不必然提升定位准确率。
 
 这组测试只能说明两个模型在这两张自定义书架图片上的表现，不能据此推断它们在一般几何理解、复杂空间推理或 UAV-VLN 导航任务上的整体能力。
