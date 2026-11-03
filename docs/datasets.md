@@ -7,7 +7,7 @@ README 中的官方链接。三个脚本只负责**下载**（CV-Bench 另外负
 | 数据集 | Hugging Face 仓库 | 对应脚本 | 本地目录 | 本地状态 |
 | --- | --- | --- | --- | --- |
 | CV-Bench | `nyu-visionx/CV-Bench` | `download_cv_bench.py` | `datasets/CV-Bench/` | 完整（2638 条测试样本） |
-| SPAR-Bench | `jasonzhango/SPAR-Bench` | `download_spar_bench.py` | `datasets/SPAR-Bench/` | 仅有 README，尚未下载数据 |
+| SPAR-Bench | `jasonzhango/SPAR-Bench` | `download_spar_bench.py` | `../datasets/SPAR-Bench-Tiny` | 仅有 README，尚未下载数据 |
 | VSI-Bench | `nyu-visionx/VSI-Bench` | `download_vsi_bench.py` | `datasets/VSI-Bench/` | 部分（README + test.jsonl） |
 
 > 项目根目录的 `dataset` 是指向 `datasets/` 的兼容符号链接，用于保持历史
@@ -201,7 +201,7 @@ datasets/SPAR-Bench/
 
 `datasets/download_spar_bench.py`：
 
-- 用 `snapshot_download` 整体下载 `jasonzhango/SPAR-Bench` 到 `datasets/SPAR-Bench/`；
+- 用 `snapshot_download` 整体下载 `jasonzhango/SPAR-Bench` 到 `../datasets/SPAR-Bench-Tiny`；
 - 下载完成后只检查 `README.md` 和 `data/` 下的 Parquet 分片；
 - **不解析 Parquet、不解码 `image` 字段、不按任务类别抽样、不保存图片或标注**。
 
@@ -225,7 +225,7 @@ datasets/SPAR-Bench/
 # 下载 CV-Bench 并提取 2D/3D 样例
 micromamba run -n vlm-test python datasets/download_cv_bench.py
 
-# 下载 SPAR-Bench（完整 RGB 版）
+# 下载 SPAR-Bench-Tiny（完整 RGB 版）
 micromamba run -n vlm-test python datasets/download_spar_bench.py
 
 # 下载 VSI-Bench（标注 + 视频 zip）
@@ -261,7 +261,7 @@ micromamba run -n vlm-test python datasets/download_vsi_bench.py
 | 脚本 | 默认输出 | 说明 |
 | --- | --- | --- |
 | `download_cv_bench.py` | `datasets/CV-Bench/` | parquet 与 `samples/`（图片、总览图、annotations.csv） |
-| `download_spar_bench.py` | `datasets/SPAR-Bench/` | 仓库原样结构，Parquet 位于 `data/` |
+| `download_spar_bench.py` | `../datasets/SPAR-Bench-Tiny` | 仓库原样结构，Parquet 位于 `data/` |
 | `download_vsi_bench.py` | `datasets/VSI-Bench/` | 标注文件与视频 zip，保持仓库原样结构 |
 
 ### 重复执行与断点续传

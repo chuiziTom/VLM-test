@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.5.0] - 2026-11-03
+
+### Features
+- 新增 `evaluation/spar_bench/`：在 SPAR-Bench-Tiny（RGB，1,000 条、
+  20 种任务）上评测 Xiaomi-Lens-0 与 Qwen3.5-4B。
+- 三种协议：`think_off_8192`、`think_on_8192`、`direct_off_64`，
+  两个模型共 6 组实验。
+- 复现官方三类评分：MCA `exact_match`、NA `process_na` + `MRA:.5:.95:.05`、
+  VCI `compute_vci_metric`；官方总分按 20 个任务分数的算术平均聚合。
+- 额外提供 Strict 解析（严格选项 / 数值 / 五轴 VCI 格式），与 Official
+  分数分开保存。
+- 新增数据集检查、断点续跑评测、指标重算、结果核验与报告生成脚本。
+- 新增 `reports/spar_bench_tiny_dataset_profile.md` 及单模型 / 对比报告。
+
+### Design Rationale
+- **不修改 CV-Bench 代码**：SPAR-Bench 的输入是多图、评分有三类，
+  单图 Adapter 和 CV-Bench Accuracy 都不能直接复用，因此新建独立目录。
+- **多图按原始顺序全部输入**：处理器返回后校验 `<|vision_start|>` 数量与
+  `image_grid_thw` 行数，杜绝 Multi-view 被截断成首图。
+- **Official 与 Strict 并列**：官方 `exact_match` 含子串与首字符回退，
+  会把解释性文本判对；Strict 只接受严格格式，二者不能混为一谈。
+- **官方函数逐行复现并做对拍测试**：`tests/test_sparbench_metrics.py`
+  直接加载官方 `utils.py` 作为参考模块比较输出。
+- **逐样本落盘 + 配置指纹**：长任务可中断续跑，且不同协议 / Prompt
+  不会混进同一结果文件。
+
+### Notes & Caveats
+- 仅 Tiny RGB 版本，不代表完整 SPAR-Bench，也不含 RGB-D。
+- Thinking On 的官方 / 严格评分都作用在 `</think>` 之后的最终回答；
+  若达到 8192 token 仍未闭合 Thinking，最终回答为空，记 0 并标记 invalid。
+- Direct Answer 使用独立 Prompt 版本，不与 Thinking Off 做单变量归因。
+
 ## [0.4.0] - 2026-11-01
 
 ### Features

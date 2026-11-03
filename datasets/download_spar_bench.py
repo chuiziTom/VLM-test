@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""下载 SPAR-Bench 数据集到 datasets/SPAR-Bench/。
+"""下载 SPAR-Bench-Tiny 数据集到 datasets/SPAR-Bench-Tiny/。
 
-对应原 Notebook：notebooks/04_load_download_datasets.ipynb 的第 2 部分（SPAR-Bench）。
+对应原 Notebook：notebooks/04_load_download_datasets.ipynb 的第 2 部分（SPAR-Bench-Tiny）。
 
-原 Notebook 对 SPAR-Bench 只做了一件事：用 ``snapshot_download`` 把
-``jasonzhango/SPAR-Bench`` 整体下载到本地。没有读取 Parquet、没有按任务抽样、
+原 Notebook 对 SPAR-Bench-Tiny 只做了一件事：用 ``snapshot_download`` 把
+``jasonzhango/SPAR-Bench-Tiny`` 整体下载到本地。没有读取 Parquet、没有按任务抽样、
 没有解码 ``image`` 字段、没有生成总览图或 JSON。本脚本严格保留这一范围。
 
 需要注意：Notebook 的 Markdown 介绍提到了 Tiny 和 RGB-D 版本，但实际代码
-下载的是 **完整 RGB 版** ``jasonzhango/SPAR-Bench``（config 为 ``default``，
+下载的是 **完整 RGB 版** ``jasonzhango/SPAR-Bench-Tiny``（config 为 ``default``，
 数据文件位于仓库的 ``data/test-*``）。如需 Tiny 或 RGB-D 版本，需要改用
 对应的仓库 ID，本脚本没有擅自替换。
 
@@ -32,9 +32,9 @@ from pathlib import Path
 
 # 默认路径以脚本自身位置为基准，不依赖运行时的当前工作目录。
 DATASET_ROOT = Path(__file__).resolve().parent
-DEFAULT_OUTPUT_DIR = DATASET_ROOT / "SPAR-Bench"
+DEFAULT_OUTPUT_DIR = DATASET_ROOT / "SPAR-Bench-Tiny"
 
-HF_REPO_ID = "jasonzhango/SPAR-Bench"           # 原 Notebook 使用的完整 RGB 版本
+HF_REPO_ID = "jasonzhango/SPAR-Bench-Tiny"           # 原 Notebook 使用的完整 RGB 版本
 DEFAULT_HF_ENDPOINT = "https://hf-mirror.com"   # 原 Notebook 使用的镜像地址
 DEFAULT_MAX_WORKERS = 4                          # 与原 Notebook 一致
 
@@ -81,7 +81,7 @@ def download_spar_bench(
     endpoint: str | None = DEFAULT_HF_ENDPOINT,
     max_workers: int = DEFAULT_MAX_WORKERS,
 ) -> Path:
-    """把 SPAR-Bench 仓库整体下载到 ``output_dir``，返回本地目录。
+    """把 SPAR-Bench-Tiny 仓库整体下载到 ``output_dir``，返回本地目录。
 
     为什么用 ``snapshot_download``：
     - 原 Notebook 就是这么做的，仓库中的 Parquet 分片需要整体取回；
@@ -147,13 +147,13 @@ def report_download(output_dir: Path) -> None:
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="下载 SPAR-Bench 数据集（完整 RGB 版本）",
+        description="下载 SPAR-Bench-Tiny 数据集（完整 RGB 版本）",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
         default=DEFAULT_OUTPUT_DIR,
-        help=f"SPAR-Bench 数据目录（默认：{DEFAULT_OUTPUT_DIR}）",
+        help=f"SPAR-Bench-Tiny 数据目录（默认：{DEFAULT_OUTPUT_DIR}）",
     )
     parser.add_argument(
         "--max-workers",
@@ -181,7 +181,7 @@ def main() -> None:
     args = build_arg_parser().parse_args()
 
     print("=" * 60)
-    print("SPAR-Bench 数据下载")
+    print("SPAR-Bench-Tiny 数据下载")
     print(f"输出目录：{args.output_dir}")
     print("=" * 60)
 
