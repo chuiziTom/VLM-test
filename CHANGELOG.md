@@ -31,6 +31,9 @@
 - Thinking On 的官方 / 严格评分都作用在 `</think>` 之后的最终回答；
   若达到 8192 token 仍未闭合 Thinking，最终回答为空，记 0 并标记 invalid。
 - Direct Answer 使用独立 Prompt 版本，不与 Thinking Off 做单变量归因。
+- 六组全量（各 1,000 条）于 2026-11-07 完成，`verify_results.py` 全部通过；
+  结果与报告见 `experiments/spar_bench/tiny_rgb/` 与
+  `reports/spar_bench_tiny_*.md`。
 
 ## [0.4.0] - 2026-11-01
 

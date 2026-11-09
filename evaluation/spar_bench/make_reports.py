@@ -158,19 +158,23 @@ def _overall_table(runs: dict[str, dict]) -> list[str]:
 
 def _answer_type_table(runs: dict[str, dict]) -> list[str]:
     lines = [
-        "| 协议 | MCA Accuracy（任务均值） | NA MRA（任务均值） | VCI（view_change_infer） |",
-        "|---|---:|---:|---:|",
+        "| 协议 | MCA Official | MCA Strict | NA Official | NA Strict | "
+        "VCI Official | VCI Strict |",
+        "|---|---:|---:|---:|---:|---:|---:|",
     ]
     for protocol, _ in PROTOCOLS:
         run = runs[protocol]
         if not run["available"]:
-            lines.append(f"| `{protocol}` | - | - | - |")
+            lines.append(f"| `{protocol}` | - | - | - | - | - | - |")
             continue
         types = run["metrics"]["answer_types"]
         lines.append(
             f"| `{protocol}` | {_pct(types['MCA']['task_mean_official'])} | "
+            f"{_pct(types['MCA']['task_mean_strict'])} | "
             f"{_pct(types['NA']['task_mean_official'])} | "
-            f"{_pct(types['VCI']['task_mean_official'])} |"
+            f"{_pct(types['NA']['task_mean_strict'])} | "
+            f"{_pct(types['VCI']['task_mean_official'])} | "
+            f"{_pct(types['VCI']['task_mean_strict'])} |"
         )
     return lines
 
@@ -250,35 +254,58 @@ def _strict_task_table(runs: dict[str, dict]) -> list[str]:
 
 
 def _performance_table(runs: dict[str, dict]) -> list[str]:
-    lines = [
-        "| 协议 | 加载(s) | E2E 均值(s) | E2E P95(s) | Prefill 均值(s) | "
-        "Decode 均值(s) | Samples/s | Decode Tokens/s | "
-        "平均 Prompt Tokens | 平均生成 Tokens | 平均 Thinking Tokens | 截断数 | 峰值显存(GiB) |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
-    ]
+    lines = ["**（1）延迟与吞吐**", "",
+             "| 协议 | 加载(s) | 总耗时(h) | E2E 均值(s) | E2E 中位(s) | E2E P95(s) | "
+             "E2E 最大(s) | Prefill 均值(s) | Decode 均值(s) | Samples/s | Decode Tokens/s |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for protocol, _ in PROTOCOLS:
         run = runs[protocol]
         if not run["available"]:
-            lines.append(f"| `{protocol}` | - | - | - | - | - | - | - | - | - | - | - | - |")
+            lines.append(f"| `{protocol}` | - | - | - | - | - | - | - | - | - | - |")
             continue
         m = run["metrics"]
         p = m["performance"]
-        timings = p["timing_seconds"]
-        tokens = p["tokens"]
+        t = p["timing_seconds"]
+        e2e = t.get("e2e_seconds") or {}
+        prefill = t.get("prefill_seconds") or {}
+        decode = p.get("decode_seconds") or {}
         lines.append(
             f"| `{protocol}` | {_num(p.get('model_load_seconds'), 1)} | "
-            f"{_num((timings.get('e2e_seconds') or {}).get('mean'), 2)} | "
-            f"{_num((timings.get('e2e_seconds') or {}).get('p95'), 2)} | "
-            f"{_num((timings.get('prefill_seconds') or {}).get('mean'), 3)} | "
-            f"{_num((p.get('decode_seconds') or {}).get('mean'), 2)} | "
-            f"{_num(p.get('samples_per_second'), 2)} | "
-            f"{_num(p.get('tokens_per_second_decode'), 1)} | "
-            f"{_num((tokens.get('prompt') or {}).get('mean'), 0)} | "
-            f"{_num((tokens.get('generated') or {}).get('mean'), 0)} | "
-            f"{_num((tokens.get('thinking') or {}).get('mean'), 0)} | "
-            f"{m['quality']['truncated']} | "
-            f"{_num((p.get('vram') or {}).get('per_sample_peak_allocated_gib_max'), 1)} |"
+            f"{_num((p.get('total_wall_seconds') or 0) / 3600, 2)} | "
+            f"{_num(e2e.get('mean'), 2)} | {_num(e2e.get('median'), 2)} | "
+            f"{_num(e2e.get('p95'), 2)} | {_num(e2e.get('max'), 2)} | "
+            f"{_num(prefill.get('mean'), 3)} | {_num(decode.get('mean'), 2)} | "
+            f"{_num(p.get('samples_per_second'), 3)} | "
+            f"{_num(p.get('tokens_per_second_decode'), 1)} |"
         )
+    lines += ["", "**（2）Token 与显存**", "",
+              "| 协议 | 平均 Prompt | 平均生成 | 平均 Thinking | 平均 Answer | "
+              "总生成 Tokens | 最大生成 | 截断数 | 加载后 allocated(GiB) | 单样本峰值(GiB) |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for protocol, _ in PROTOCOLS:
+        run = runs[protocol]
+        if not run["available"]:
+            lines.append(f"| `{protocol}` | - | - | - | - | - | - | - | - | - |")
+            continue
+        m = run["metrics"]
+        p = m["performance"]
+        tk = p["tokens"]
+        vram = p["vram"]
+        after_load = (vram.get("after_load") or {}).get("allocated_gib")
+        lines.append(
+            f"| `{protocol}` | {_num((tk.get('prompt') or {}).get('mean'), 0)} | "
+            f"{_num((tk.get('generated') or {}).get('mean'), 0)} | "
+            f"{_num((tk.get('thinking') or {}).get('mean'), 0)} | "
+            f"{_num((tk.get('answer') or {}).get('mean'), 0)} | "
+            f"{tk.get('total_generated', 0)} | "
+            f"{_num((tk.get('generated') or {}).get('max'), 0)} | "
+            f"{m['quality']['truncated']} | {_num(after_load, 2)} | "
+            f"{_num((vram or {}).get('per_sample_peak_allocated_gib_max'), 2)} |"
+        )
+    lines += ["",
+              "说明：E2E 为单条样本端到端耗时（图片解码 + 预处理 + Prefill + Decode）；"
+              "Decode Tokens/s 只统计 decode 阶段；峰值显存为 PyTorch "
+              "`max_memory_allocated`，与整卡 `nvidia-smi` 使用量不同。", ""]
     return lines
 
 
@@ -350,7 +377,7 @@ def _failure_examples(runs: dict[str, dict], limit_per_protocol: int = 3) -> lis
 
 def _limits_section(model: dict) -> list[str]:
     return [
-        "## 9. 测试局限",
+        "## 12. 测试局限",
         "",
         "- 本次只评测 **SPAR-Bench-Tiny（RGB）**，不能代表完整 SPAR-Bench 或 RGB-D 结果。",
         "- 每题 50 条，单任务分数置信区间较宽；任务间 1~2 个百分点的差异不宜过度解读。",
@@ -474,10 +501,6 @@ def build_model_report(model_dir: str, runs: dict[str, dict]) -> str:
     add("")
     lines.extend(_performance_table(runs))
     add("")
-    add("说明：E2E 为单条样本端到端耗时（图片解码 + 预处理 + Prefill + Decode）；"
-        "Tokens/s 为生成阶段吞吐；峰值显存为 PyTorch `max_memory_allocated`，"
-        "与整卡 `nvidia-smi` 使用量不同。")
-    add("")
 
     add("## 10. 数据质量与异常")
     add("")
@@ -490,16 +513,49 @@ def build_model_report(model_dir: str, runs: dict[str, dict]) -> str:
 
     add("## 11. 结论与下一步")
     add("")
-    if complete:
-        best_protocol = max(
-            (p for p, _ in PROTOCOLS),
-            key=lambda p: runs[p]["metrics"]["overall"]["official"] or -1,
+    available = [(p, label, runs[p]) for p, label in PROTOCOLS if runs[p]["available"]]
+    if available:
+        best_protocol, best_label, best_run = max(
+            available,
+            key=lambda item: item[2]["metrics"]["overall"]["official"] or -1,
         )
-        add(f"- 在三个协议中，`{best_protocol}` 的官方总分最高。")
-    add("- Thinking On 与 Thinking Off 使用完全相同的 Prompt，二者的差异主要来自"
-        "是否生成显式推理过程以及 8192 token 的预算是否被耗尽。")
-    add("- Direct Answer 的 Prompt 与另外两组不同，应作为独立部署方案比较。")
-    add("- 下一步可在完整 SPAR-Bench 上复核 Tiny 结论，并补做 RGB-D 版本。")
+        bm = best_run["metrics"]
+        add(f"- 三个协议中 **{best_label}** 的官方总分最高："
+            f"Official {_pct(bm['overall']['official'])} / "
+            f"Strict {_pct(bm['overall']['strict'])}。")
+        add(f"- 该协议层级得分：Low {_pct(bm['levels']['low']['official_score'])}、"
+            f"Medium {_pct(bm['levels']['medium']['official_score'])}、"
+            f"High {_pct(bm['levels']['high']['official_score'])}；"
+            f"MCA {_pct(bm['answer_types']['MCA']['task_mean_official'])}、"
+            f"NA {_pct(bm['answer_types']['NA']['task_mean_official'])}、"
+            f"VCI {_pct(bm['answer_types']['VCI']['task_mean_official'])}。")
+
+        off_run = runs["think_off_8192"]
+        on_run = runs["think_on_8192"]
+        direct_run = runs["direct_off_64"]
+        if off_run["available"]:
+            om = off_run["metrics"]
+            gap = (om["overall"]["official"] - om["overall"]["strict"]) * 100
+            add(f"- Thinking Off：Official 比 Strict 高 {gap:+.2f} pp。"
+                "官方 `exact_match` 的首字符 / 子串回退会奖励部分解释性文本，"
+                "Strict 不奖励；两者不能混用。")
+            add(f"- Thinking Off 有 {om['quality']['invalid']} 条严格解析失败、"
+                f"{om['quality']['truncated']} 条截断；"
+                f"平均生成 {om['performance']['tokens']['generated']['mean']:.0f} tokens。")
+        if off_run["available"] and on_run["available"]:
+            delta = (on_run["metrics"]["overall"]["official"]
+                     - off_run["metrics"]["overall"]["official"]) * 100
+            add(f"- Thinking On 相对 Off 的官方变化 {delta:+.2f} pp；"
+                f"On 截断 {on_run['metrics']['quality']['truncated']}/1000，"
+                f"平均生成 {on_run['metrics']['performance']['tokens']['generated']['mean']:.0f} tokens。")
+        if direct_run["available"]:
+            dm = direct_run["metrics"]
+            add(f"- Direct Answer：E2E 均值 {dm['performance']['timing_seconds']['e2e_seconds']['mean']:.2f}s，"
+                f"截断 {dm['quality']['truncated']}/1000，"
+                f"VCI {_pct(dm['answer_types']['VCI']['task_mean_official'])}。")
+            add("- Direct Answer 使用独立 Prompt 版本，不能与 Thinking Off 做单变量归因。")
+    add("- 下一步可在完整 SPAR-Bench 上复核 Tiny 结论，并补做 RGB-D 版本；"
+        "VCI 是两模型共同的最弱项，值得单独做 prompt / 输出格式优化。")
     add("")
     lines.extend(_limits_section(model))
 
@@ -748,16 +804,75 @@ def build_comparison(all_runs: dict[str, dict[str, dict]]) -> str:
 
     add("### 8.5 综合判断")
     add("")
-    add("- **空间理解**：以 Official Overall 为准，逐协议比较两模型；"
-        "Tiny 每题仅 50 条，任务级 1~2 个百分点不构成稳定差异。")
-    add("- **层级结构**：若 High 差距显著大于 Low，说明瓶颈更可能在跨视角 / "
-        "空间推理而不是基础深度、距离感知。")
-    add("- **Thinking 的作用**：只比较 Off 与 On（同 Prompt）；若 On 的 token 数"
-        "大幅增加但分数未提升，说明该模型的显式思考在本数据上没有转化为精度。")
-    add("- **Direct Answer 的定位**：64 token 是独立部署方案，"
-        "不能把它与 Off 的差异归因为“减少思考”的单一变量效应。")
-    add("- **工程可用性**：结合 E2E 均值、Decode Tokens/s 与显存峰值判断单卡吞吐；"
-        "Thinking On 大量触顶 8192 时，实际部署成本会显著高于 Off。")
+
+    def _score(model_dir, protocol, key="official"):
+        run = all_runs[model_dir][protocol]
+        return run["metrics"]["overall"][key] if run["available"] else None
+
+    def _delta(protocol, key="official"):
+        a = _score("xiaomi_lens_0", protocol, key)
+        b = _score("qwen3_5_4b", protocol, key)
+        return None if a is None or b is None else (b - a) * 100
+
+    off_delta = _delta("think_off_8192")
+    off_strict_delta = _delta("think_off_8192", "strict")
+    if off_delta is not None:
+        add(f"- **Thinking Off**：Qwen 的 Official 领先 {off_delta:+.2f} pp；"
+            f"但 Strict 下为 {off_strict_delta:+.2f} pp。"
+            + (" 官方差距主要来自 `exact_match` 的格式宽容度，"
+               "严格解析后两模型基本持平。" if abs(off_strict_delta) < abs(off_delta) / 2
+               else " 严格解析后差距仍然存在。"))
+
+    on_delta = _delta("think_on_8192")
+    if on_delta is not None:
+        x_on = all_runs["xiaomi_lens_0"]["think_on_8192"]["metrics"]
+        q_on = all_runs["qwen3_5_4b"]["think_on_8192"]["metrics"]
+        add(f"- **Thinking On**：Qwen - Xiaomi = {on_delta:+.2f} pp（Strict "
+            f"{_delta('think_on_8192', 'strict'):+.2f} pp）。"
+            f"两模型截断分别为 Xiaomi {x_on['quality']['truncated']}/1000、"
+            f"Qwen {q_on['quality']['truncated']}/1000；"
+            f"Low 层为 Xiaomi {_pct(x_on['levels']['low']['official_score'])}、"
+            f"Qwen {_pct(q_on['levels']['low']['official_score'])}，"
+            "说明低层数值题被 8192 上限拖累最明显。")
+
+    direct_delta = _delta("direct_off_64")
+    if direct_delta is not None:
+        x_dir = all_runs["xiaomi_lens_0"]["direct_off_64"]["metrics"]
+        q_dir = all_runs["qwen3_5_4b"]["direct_off_64"]["metrics"]
+        add(f"- **Direct Answer**：Qwen - Xiaomi = {direct_delta:+.2f} pp（Strict "
+            f"{_delta('direct_off_64', 'strict'):+.2f} pp）。"
+            f"该协议是两模型各自的最好成绩：Xiaomi {_pct(x_dir['overall']['official'])}、"
+            f"Qwen {_pct(q_dir['overall']['official'])}；"
+            "说明格式约束能显著提升两者的可评分性。")
+
+    vci_values = []
+    for model_dir, model in MODELS.items():
+        for protocol, _ in PROTOCOLS:
+            run = all_runs[model_dir][protocol]
+            if run["available"]:
+                vci_values.append((model["title"], protocol,
+                                   run["metrics"]["answer_types"]["VCI"]["task_mean_official"]))
+    if vci_values:
+        worst = min(vci_values, key=lambda item: item[2])
+        best = max(vci_values, key=lambda item: item[2])
+        add(f"- **VCI 是共同短板**：全部 6 组在 {_pct(worst[2])} ~ {_pct(best[2])} 之间"
+            f"（最高为 {best[0]} / `{best[1]}`）。`view_change_infer` 需要精确输出 "
+            "5 组移动/旋转参数，当前模型普遍格式不合格或数值偏差大。")
+
+    all_scores = []
+    for model_dir, model in MODELS.items():
+        for protocol, _ in PROTOCOLS:
+            run = all_runs[model_dir][protocol]
+            if run["available"]:
+                all_scores.append((model["title"], protocol,
+                                   run["metrics"]["overall"]["official"]))
+    if all_scores:
+        best = max(all_scores, key=lambda item: item[2])
+        add(f"- **最佳单项**：{best[0]} / `{best[1]}`，Official {_pct(best[2])}。")
+
+    add("- **工程可用性**：Direct Answer 约 0.5s/样本；Thinking Off 下 Qwen 明显快于 "
+        "Xiaomi；Thinking On 两组都达到 1~3 分钟/样本，且大量触顶 8192，"
+        "部署成本远高于 Direct / Off。")
     add("")
 
     add("## 9. 报告说明与局限")
