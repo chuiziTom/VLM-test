@@ -23,3 +23,5 @@ __pycache__/
 /datasets/SPAR-Bench-Tiny/.gitattributes
 /experiments/spar_bench/logs/
 /experiments/spar_bench/tiny_rgb/
+/evaluation/几何理解简单测试/qwen_video_outputs/clip_2s.mp4
+/evaluation/几何理解简单测试/WeVisOne原生诊断输出/
